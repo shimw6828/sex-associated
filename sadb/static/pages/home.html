@@ -1,0 +1,145 @@
+<div id="main-container" style="width:100%; height:300px; background:url(/static/image/background.jpg); margin-top:51px">
+
+    <form class="form-search  col-md-4 col-md-offset-4 clearfix rows" action="search.html" method="post"
+          style="margin-top:200px">
+        <div class="col-md-4" style="padding-right:0px;">
+            <select class="form-control" style="border-radius:15px 0px 0px 15px">
+                <option value="All Field">All Field</option>
+                <option value="Gene Name">Gene Name</option>
+                <option value="Gene Name">Ensemble IDs</option>
+            </select>
+        </div>
+        <div class="col-md-8 col-md-offset-4" style="padding-left:0px;margin-left:0px">
+            <div class="input-group">
+                <input type="text" class="form-control" data-provide="typeahead" name="search" style="border-radius:0px 0px 0px 0px">
+                <span class="input-group-btn">
+					            <button class="btn btn-default btn-success" id="search_button" type="button" ng-click="search_query()">
+                                        style="border-radius:0px 15px 15px 0px">
+						 	    Search
+					            </button>
+                </span>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="alert alert-danger alert-dismissible" ng-show="alert_show" id="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <strong>Sorry, your query item is not exist</strong>
+</div>
+<div class="container" style="margin-top:40px">
+    <section class="jumbotron">
+		        <span style="float:right">
+		            <h2><small>v1.00</small></h2>
+		        </span>
+        <h2>SAGD<br/>
+            <small>Sex-Associated Genes Database</small>
+        </h2>
+        <hr/>
+        <p>
+            Here, we introduce the miRNA Pathway Dictionary Database (miRPathDB), with which we aim to augment available
+            target pathway web-servers by providing researches easy access to the information which pathways are
+            regulated by a miRNA, which miRNAs target a pathway and how specific the regulations are. The database
+            contains a large number of miRNAs (2,599 human miRNAs), different miRNA target sets (14,773 experimentally
+            validated target genes as well as 19281 predicted targets genes) and a broad selection of functional
+            biochemical categories (280 KEGG-, 296 WikiPathways-, 310 BioCarta-, 617 SMPDB-, 221 PID-, 1,300 Reactome
+            pathways, 6,169 biological processes, 1,550 molecular functions, and 758 cellular components from Gene
+            Ontology, and 806 cytogenetic bands, totaling 12,875 categories). In addition to H. sapiens, also M.
+            musculus data are stored and can be compared to human target pathways.
+        </p>
+    </section>
+    <hr/>
+</div>
+<div class="container">
+    <div class="row-fluid">
+        <div class="col-md-4">
+            <a href="#">
+                <div style="background:#ddd ;border-radius:5px 5px 5px 5px; padding-top:20px" href="#">
+                    <div class="caption">
+                        <h2 class="text-center">Browse</h2>
+                        <p class="text-center">Find all sex-associated genes that I was screened out by species</p>
+                    </div>
+                    <div class="rounded" style="padding-bottom:20px">
+                        <img class="img-responsive center-block" style="width:60px" src="/static/image/eye.png"/>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="#">
+                <div style="background:#ddd ;border-radius:5px 5px 5px 5px; padding-top:20px" href="#">
+                    <div class="caption">
+                        <h2 class="text-center">Backtracking</h2>
+                        <p class="text-center">Find orthologous genes through evolutionary tree until it doesn't have a
+                            different expression</p>
+                    </div>
+                    <div class="rounded" style="padding-bottom:20px">
+                        <img class="img-responsive center-block" style="width:60px" src="/static/image/tree.png"/>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="#">
+                <div style="background:#ddd ;border-radius:5px 5px 5px 5px; padding-top:20px" href="#">
+                    <div class="caption">
+                        <h2 class="text-center">Blast</h2>
+                        <p class="text-center">submit your sequence and we will find regions of similarity between
+                            biological sequences in our database</p>
+                    </div>
+                    <div class="rounded" style="padding-bottom:20px">
+                        <img class="img-responsive center-block" style="width:60px" src="/static/image/align.png"/>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+<div class="container" style="padding-bottom:40px">
+    <hr/>
+    <div class="row-fluid">
+        <div class="col-md-4">
+            <a href="#">
+                <div style="background:#ddd ;border-radius:5px 5px 5px 5px; padding-top:20px" href="#">
+                    <div class="caption">
+                        <h2 class="text-center">Analysis</h2>
+                        <p class="text-center">given some tools to analysis your datas</p>
+                    </div>
+                    <div class="rounded" style="padding-bottom:20px">
+                        <img class="img-responsive center-block" style="width:60px" src="/static/image/analysis.png"/>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4">
+            <a href="#">
+                <div style="background:#ddd ;border-radius:5px 5px 5px 5px; padding-top:20px" href="#">
+                    <div class="caption">
+                        <h2 class="text-center">Downloads</h2>
+                        <p class="text-center">Transfer SAGD's data to your computer </p>
+                    </div>
+                    <div class="rounded" style="padding-bottom:20px">
+                        <img class="img-responsive center-block" style="width:60px" src="/static/image/download.png"/>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="#">
+                <div style="background:#ddd ;border-radius:5px 5px 5px 5px; padding-top:20px" href="#">
+                    <div class="caption">
+                        <h2 class="text-center">Help</h2>
+                        <p class="text-center">Learn more about our databaes</p>
+                    </div>
+                    <div class="rounded" style="padding-bottom:20px">
+                        <img class="img-responsive center-block" style="width:60px" src="/static/image/help.png"/>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
