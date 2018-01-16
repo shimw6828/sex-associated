@@ -1,7 +1,7 @@
 <div id="main-container" style="margin-top:51px">
     <div paging
          page="currentPage"
-         page-size="15"
+         page-size=15
          total="gene_list_count"
          scroll-top="true"
          hide-if-empty="true"
@@ -17,8 +17,9 @@
          ul-class="pagination"
          active-class="active"
          disabled-class="disabled"
-         paging-action="update_gene(page)"
-    ></div>
+         paging-action="update_gene('test',page,page-size)"
+    >
+    </div>
     <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1">
         <thead>
         <tr>
@@ -49,24 +50,24 @@
         </tbody>
     </table>
     <div paging
-     page="currentPage"
-     page-size=30
-     total="gene_list_count"
-     scroll-top="true"
-     hide-if-empty="true"
-     show-prev-next="true"
-     show-first-last="true"
-     text-title-page="Page {page} Hover Over"
-     text-title-first="First hover"
-     text-title-last="Last hover"
-     text-title-next="Next hover"
-     text-title-prev="Prev hover"
-     show-prev-next="true"
-     show-first-last="true"
-     ul-class="pagination"
-     active-class="active"
-     disabled-class="disabled"
-     paging-action="update_gene(page,page-size)"
+         page="currentPage"
+         page-size=15
+         total="gene_list_count"
+         scroll-top="true"
+         hide-if-empty="true"
+         show-prev-next="true"
+         show-first-last="true"
+         text-title-page="Page {page} Hover Over"
+         text-title-first="First hover"
+         text-title-last="Last hover"
+         text-title-next="Next hover"
+         text-title-prev="Prev hover"
+         show-prev-next="true"
+         show-first-last="true"
+         ul-class="pagination"
+         active-class="active"
+         disabled-class="disabled"
+         paging-action="update_gene('test',page,page-size)"
     >
     </div>
 </div>
