@@ -10,7 +10,10 @@ def import_gene_info():
         for line in reader:
             fields = line.rstrip("\n").split(",")
             record = dict(zip(header,fields))
-            db.gene_info.insert_one(record)
+            for k in record:
+                if k in ["baseMean","log2FoldChange","lfcSE","stat","pvalue","padj"]:
+                    record[k] = float(record[k])
+            db.SRP062329.insert_one(record)
 
 if __name__ =="__main__":
     import_gene_info()
