@@ -1,8 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_pymongo import PyMongo
 
 from sadb import app
 
-db = SQLAlchemy(app)
+mongo = PyMongo(app)
 
 '''
 class human(db.Model):
