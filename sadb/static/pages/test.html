@@ -1,4 +1,4 @@
-<div id="main-container" style="margin-top:51px">
+<div class="container">
     <div paging
          page="currentPage"
          page-size=15
@@ -34,7 +34,7 @@
         </thead>
             <tr ng-repeat="gene in gene_list" ts-repeat>
                  <td>
-                    <a href="#!/gene_info?gene={$ gene.gene_id $}" target="_self" ng-click="gene_detail()">
+                    <a href="#/gene_info?gene={$ gene.gene_id $}" target="_self" ng-click="gene_detail()">
                         {{ gene.gene_id }}
                     </a>
                 </td>

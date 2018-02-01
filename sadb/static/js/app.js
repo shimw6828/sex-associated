@@ -15,9 +15,9 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort'])
                 templateUrl:"/static/pages/test.html",
                 controller: "testController"
             })
-            .when("/information",{
-                templateUrl:"/static/pages/information.html",
-                controller: "infoController"
+            .when("/browse",{
+                templateUrl:"/static/pages/browse.html",
+                controller: "browseController"
             });
     })
     .service('sadbService',function () {

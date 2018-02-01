@@ -1,4 +1,4 @@
-#!/home/shimw/github/sex-associated/sadb/venv/bin/python
+#!/opt/shimw/github/sex-associated/sadb/venv/bin/python
 
 import sys
 import getopt

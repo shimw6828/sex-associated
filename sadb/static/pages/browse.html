@@ -1,0 +1,34 @@
+<div id="main-container" class="main-container">
+    <div >
+        <a href="#/"><img src="/static/image/top.png" style="width: 1140px;height: 100px"></a>
+    </div>
+
+
+    <div class="row" style="margin-top: 51px">
+    <div class="col-md-2" >
+        <div class="browsefloat" >
+            <br />
+            <a href="/info/tax"><p>human</p></a>
+            <a href="/info/tax"><p>mouse</p></a>
+            <a href="/info/tax"><p>Chicken</p></a>
+            <a href="/info/tax"><p>Cow</p></a>
+            <a href="/info/tax"><p>Dog</p></a>
+            <a href="/info/tax"><p>Pig</p></a>
+            <a href="/info/tax"><p>Medaka</p></a>
+            <br />
+        </div>
+
+    </div>
+        <div class="col-md-7" style="padding-right: 0px;padding-left:0px">
+            <img id="Species" src="/static/image/species.png" style="width:100%" usemap="#SpeciesTree">
+            <map name="SpeciesTree">
+                <area shape="circle" coords="806,180,5"  title="ssss" href="/stac" alt="test">
+            </map>
+        </div>
+        <div class="col-md-3" style="padding-left: 0px; margin-top: 44px" >
+            <div style="margin-bottom: 1.45px" ng-repeat="tax in tax_list"><a class="tax" title="{{ tax.scientific_name }}" href="#/tax?tax_name={{ tax.common_name }}" target="_blank" >{{ tax.common_name }}</a></div>
+
+        </div>
+
+    </div>
+</div>

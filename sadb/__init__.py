@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 app.config.from_object('sadb.config')
 
-app.debug = True
+
 
 #设置api
 api = Api(app)
