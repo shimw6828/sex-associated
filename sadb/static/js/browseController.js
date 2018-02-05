@@ -58,6 +58,25 @@ function browseController($scope,$http,$routeParams,sadbService) {
     ]
     $scope.tax_list=taxs;
    //js加载过快，会使naturalWidth为0
+    $scope.TreeCoord = function(){
+        var imgW = 1378;
+        var imgH = 2780;
+        var imgW01 = $('#Species').width();
+        var imgH01= 1565.190;
+        $scope.W_Multiple = imgW01/imgW; //对应比例
+        $scope.H_Multiple = imgH01/imgH; //对应比例
+        $http({
+            url: base_url+'/api/TreeCoord',
+            method: 'GET'
+        }).then(
+            function (response) {
+                console.log(response);
+                $scope.coords = response.data
+            }
+        )
+    };
+    $scope.TreeCoord();
+
 
     $('#Species').ready(function(){
         var mapD = $('area'); //获取页面所有的热点区域
@@ -68,7 +87,7 @@ function browseController($scope,$http,$routeParams,sadbService) {
         var test = $('#Species').height()
         imgH01= 1565.190
         console.log(imgW01,test,mapD.length)
-        var W_Multiple = imgW01/imgW; //对应比例
+        $scope.H_Multiple = imgW01/imgW; //对应比例
         var H_Multiple = imgH01/imgH; //对应比例
         var _arrS = ''; //存放coords的值
         var _arr = []; //存放coords对应的值

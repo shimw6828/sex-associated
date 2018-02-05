@@ -22,7 +22,7 @@
         <div class="col-md-7" style="padding-right: 0px;padding-left:0px">
             <img id="Species" src="/static/image/species.png" style="width:100%" usemap="#SpeciesTree">
             <map name="SpeciesTree">
-                <area shape="circle" coords="806,180,5"  title="ssss" href="/stac" alt="test">
+                <area ng-repeat="coord in coords" shape="circle" coords="{{ coord.X*W_Multiple }},{{ coord.Y*H_Multiple }},5"  title="{{ coord.name }}" href="/tax?tax_name={{ coord.id }}" alt="test">
             </map>
         </div>
         <div class="col-md-3" style="padding-left: 0px; margin-top: 44px" >

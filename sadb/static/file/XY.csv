@@ -1,0 +1,102 @@
+X,Y,name,id
+22,2379.5,origin,origin
+144,2270,Vertebrata,Vertebrata
+498,2088,Euteleostomi ,Euteleostomi 
+542,1838,Sarcopterygii,Sarcopterygii
+664,1560,Tetrapoda,Tetrapoda
+736,2340,Neopterygii,Neopterygii
+742,1052,Amniota,Amniota
+806,180,Sauria,Sauria
+1008,1926,Mammalia,Mammalia
+1044,1834,Theria,Theria
+1106.5,2276.5,Descendant of: Neopterygii ,Descendant of: Neopterygii 
+1140,2224,Eupercaria,Eupercaria
+1150,1696,Eutheria,Eutheria
+1164,262,Neognathae,Neognathae
+1168,1470,Boreoeutheria,Boreoeutheria
+1174,2332,Atherinomorphae,Atherinomorphae
+1180,1142,Euarchontoglires,Euarchontoglires
+1196,940,Glires,Glires
+1199.5,1802.5,Descendant of: Boreoeutheria,Descendant of: Boreoeutheria.1
+1200,208,Galloanserae,Galloanserae
+1204,1726,Descendant of: Boreoeutheria,Descendant of: Boreoeutheria.2
+1207.5,1790.5,Descendant of: Boreoeutheria,Descendant of: Boreoeutheria.3
+1212,1344,Primates,Primates
+1214,772,Rodentia,Rodentia
+1218,1012,Descendant of: Rodentia,Descendant of: Rodentia.1
+1220,964,Descendant of: Rodentia,Descendant of: Rodentia.2
+1236,1660,Descendant of: Boreoeutheria,Descendant of: Boreoeutheria.4
+1240,1180,Strepsirrhini,Strepsirrhini
+1250,916,Descendant of: Rodentia,Descendant of: Rodentia.3
+1256,2188,Tetraodontidae,Tetraodontidae
+1268,868,Descendant of: Rodentia,Descendant of: Rodentia.4
+1268,1756,Caniformia,Caniformia
+1272,316,Descendant of: Neognathae ,Descendant of: Neognathae 
+1272,532,Descendant of: Rodentia,Descendant of: Rodentia.5
+1272,1508,Simiiformes,Simiiformes
+1284,172,Descendant of: Galloanserae,Descendant of: Galloanserae
+1288,460,Descendant of: Rodentia,Descendant of: Rodentia.6
+1292,604,Bathyergidae,Bathyergidae
+1294,508,Descendant of: Rodentia,Descendant of: Rodentia.7
+1294,822,Descendant of: Rodentia,Descendant of: Rodentia.8
+1300,1428,Catarrhini,Catarrhini
+1302,778,Descendant of: Rodentia,Descendant of: Rodentia.9
+1312,736,Descendant of: Rodentia,Descendant of: Rodentia.10
+1318,1354,Hominoidea,Hominoidea
+1322,700,Cricetinae,Cricetinae
+1330,1504,Cercopithecinae,Cercopithecinae
+1332,1468,Descendant of: Cercopithecinae,Descendant of: Cercopithecinae
+1340,1312,Homininae,Homininae
+1342,1276,Descendant of: Homininae,Descendant of: Homininae
+1346,412,Descendant of: Rodentia,Descendant of: Rodentia.11
+1358,100,Anolis carolinensis,Anolis carolinensis
+1358,148,Gallus gallus,Gallus gallus
+1358,196,Meleagris gallopavo,Meleagris gallopavo
+1358,244,Anas platyrhynchos,Anas platyrhynchos
+1358,292,Ficedula albicollis,Ficedula albicollis
+1358,340,Taeniopygia guttata,Taeniopygia guttata
+1358,388,Cavia aperea,Cavia aperea
+1358,436,Cavia porcellus,Cavia porcellus
+1358,484,Octodon degus,Octodon degus
+1358,532,Chinchilla lanigera,Chinchilla lanigera
+1358,580,Fukomys damarensis,Fukomys damarensis
+1358,628,Heterocephalus glaber,Heterocephalus glaber
+1358,676,Cricetulus griseus,Cricetulus griseus
+1358,724,Mesocricetus auratus,Mesocricetus auratus
+1358,772,Microtus ochrogaster,Microtus ochrogaster
+1358,820,Peromyscus maniculatus,Peromyscus maniculatus
+1358,868,Mus musculus,Mus musculus
+1358,916,Nannospalax galili,Nannospalax galili
+1358,964,Jaculus jaculus,Jaculus jaculus
+1358,1012,Dipodomys ordii,Dipodomys ordii
+1358,1060,Ictidomys tridecemlineatus,Ictidomys tridecemlineatus
+1358,1108,Oryctolagus cuniculus,Oryctolagus cuniculus
+1358,1156,Otolemur garnettii,Otolemur garnettii
+1358,1204,Microcebus murinus,Microcebus murinus
+1358,1252,Pan troglodytes,Pan troglodytes
+1358,1300,Homo sapiens ,Homo sapiens 
+1358,1348,Gorilla gorilla,Gorilla gorilla
+1358,1396,Nomascus leucogenys,Nomascus leucogenys
+1358,1444,Macaca mulatta,Macaca mulatta
+1358,1492,Papio anubis,Papio anubis
+1358,1540,Chlorocebus sabaeus,Chlorocebus sabaeus
+1358,1588,Callithrix jacchus,Callithrix jacchus
+1358,1636,Bos taurus,Bos taurus
+1358,1684,Sus scrofa,Sus scrofa
+1358,1732,Canis lupus,Canis lupus
+1358,1780,Ailuropoda melanoleuca,Ailuropoda melanoleuca
+1358,1828,Equus caballus,Equus caballus
+1358,1876,Myotis lucifugus,Myotis lucifugus
+1358,1924,Loxodonta africana,Loxodonta africana
+1358,1972,Monodelphis domestica,Monodelphis domestica
+1358,2020,Ornithorhynchus anatinus,Ornithorhynchus anatinus
+1358,2068,Xenopus tropicalis,Xenopus tropicalis
+1358,2116,Latimeria chalumnae,Latimeria chalumnae
+1358,2164,Takifugu rubripes,Takifugu rubripes
+1358,2212,Tetraodon nigroviridis,Tetraodon nigroviridis
+1358,2260,Gasterosteus aculeatus,Gasterosteus aculeatus
+1358,2308,Oryzias latipes,Oryzias latipes
+1358,2356,Xiphophorus maculatus,Xiphophorus maculatus
+1358,2404,Lepisosteus oculatus,Lepisosteus oculatus
+1358,2452,Petromyzon marinus,Petromyzon marinus
+1358,2500,Ciona intestinalis,Ciona intestinalis

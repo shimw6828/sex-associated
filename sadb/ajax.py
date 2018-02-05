@@ -1,5 +1,6 @@
 import flask_restful
 import string
+import json
 from sadb import app, api
 from sadb.core import mongo
 from flask_restful import Resource, fields, marshal_with, reqparse, marshal
@@ -42,6 +43,27 @@ class test(Resource):
 
 api.add_resource(test, '/api/test')
 
+treecoord_fields = {
+    'X': fields.Float,
+    'Y': fields.Float,
+    'name': fields.String,
+    'id': fields.String,
+}
+class TreeCoord(Resource):
+    @marshal_with(treecoord_fields)
+    def get(self):
+        # # parser = reqparse.RequestParser()
+        # # parser.add_argument('W_Multiple',type=float)
+        # # parser.add_argument('H_Multiple',type=float)
+        # # args = parser.parse_args()
+        # imgW=args["W_Multiple"]
+        # imgH = args["H_Multiple"]
+        coord=list(mongo.db.TreeCoords.find({},{"_id":0}))
+        # for i in coord:
+        #     i['X']=i['X']/W_Multiple
+        #     i['Y']=i['Y']/H_Multiple
+        return coord
+api.add_resource(TreeCoord, '/api/TreeCoord')
 
 
 
