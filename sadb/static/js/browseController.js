@@ -78,32 +78,7 @@ function browseController($scope,$http,$routeParams,sadbService) {
     $scope.TreeCoord();
 
 
-    $('#Species').ready(function(){
-        var mapD = $('area'); //获取页面所有的热点区域
-        var imgW = 1378
-        var imgH = 2780
-        console.log(imgW,imgH,mapD.length)
-        var imgW01 = $('#Species').width()
-        var test = $('#Species').height()
-        imgH01= 1565.190
-        console.log(imgW01,test,mapD.length)
-        $scope.H_Multiple = imgW01/imgW; //对应比例
-        var H_Multiple = imgH01/imgH; //对应比例
-        var _arrS = ''; //存放coords的值
-        var _arr = []; //存放coords对应的值
-        for (var i = 0; i < mapD.length; i++) { //热点区域的个数
-            _arr = [];
-            _arrS = $(mapD[i]).attr('coords');
-            _arr = _arrS.split(',');
 
-            _arr[0]=_arr[0]*W_Multiple;
-            _arr[1]=_arr[1]*H_Multiple;
-            _arrS = _arr.join(',');
-            console.log(_arrS)
-            // 把缩放比例后对应的coords，赋值给原有coords
-            $(mapD[i]).attr('coords',_arrS);
-        }
-    });
 };
 
 
