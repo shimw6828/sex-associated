@@ -1,0 +1,101 @@
+<div class="container">
+    <div >
+        <a href="#/"><img src="/static/image/top.png" style="width: 100%;height: 100px"></a>
+    </div>
+
+<div class="row" style="margin-top: 2%">
+    <div class="col-md-4" style="padding:0">
+        <ui-select ng-model="taxonomy" theme="selectize" style="width: 300px;"  ng-change="update_taxon()" title="Choose a taxonomy">
+        <ui-select-match placeholder="Select or search a specie in the list...">{{$select.selected.Common_name}}</ui-select-match>
+        <ui-select-choices repeat="taxon in taxons | filter:$select.search">
+            <span ng-bind-html="taxon.Common_name | highlight: $select.search"></span>
+        </ui-select-choices>
+        </ui-select>
+    </div>
+
+
+</div>
+
+
+
+
+<div class="row">
+<div class="col-md-6" style="padding:0">
+    <div paging
+         page="currentPage"
+         page-size=15
+         total="gene_list_count"
+         scroll-top="true"
+         hide-if-empty="true"
+         show-prev-next="true"
+         show-first-last="true"
+         text-title-page="Page {page} Hover Over"
+         text-title-first="First hover"
+         text-title-last="Last hover"
+         text-title-next="Next hover"
+         text-title-prev="Prev hover"
+         show-prev-next="true"
+         show-first-last="true"
+         ul-class="pagination"
+         active-class="active"
+         disabled-class="disabled"
+         paging-action="update_taxon('test',page,page-size)"
+    >
+    </div></div>
+
+        <form class="pull-right" style="transform: translateY(50%)" accept-charset="UTF-8">
+        <input type="text" class="form-control" >
+    </form>
+
+</div>
+    <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1">
+        <thead>
+        <tr>
+            <th style="text-align: center" ts-criteria="gene_id">Gene ID</th>
+            <th style="text-align: center" ts-criteria="symbol">symbol</th>
+            <th style="text-align: center" ts-criteria="baseMean|parseFloat">baseMean</th>
+            <th style="text-align: center" ts-criteria="SRA ID">SRA ID</th>
+            <th style="text-align: center" ts-criteria="Chromosome">Chromosome</th>
+            <th style="text-align: center" ts-criteria="log2FoldChange|parseFloat">log2FoldChange</th>
+            <th style="text-align: center" ts-criteria="padj|parseFloat">padj</th>
+        </tr>
+        </thead>
+            <tr ng-repeat="gene in gene_list" ts-repeat>
+                 <td>
+                    <a href="#/gene_info?gene={{ gene.gene_ID }}" target="_self" ng-click="gene_detail()">
+                        {{ gene.gene_ID }}
+                    </a>
+                </td>
+                <td style="text-align: center">{{ gene.external_gene_name }}</td>
+                <td style="text-align: center">{{ gene.baseMean }}</td>
+                <td style="text-align: center">{{ gene.SRA_ID }}</td>
+                <td style="text-align: center">{{ gene.chromosome_name }}</td>
+                <td style="text-align: center">{{ gene.log2FoldChange }}</td>
+                <td style="text-align: center">{{ gene.padj }}</td>
+            </tr>
+        <tbody>
+
+        </tbody>
+    </table>
+    <div paging
+         page="currentPage"
+         page-size=15
+         total="gene_list_count"
+         scroll-top="true"
+         hide-if-empty="true"
+         show-prev-next="true"
+         show-first-last="true"
+         text-title-page="Page {page} Hover Over"
+         text-title-first="First hover"
+         text-title-last="Last hover"
+         text-title-next="Next hover"
+         text-title-prev="Prev hover"
+         show-prev-next="true"
+         show-first-last="true"
+         ul-class="pagination"
+         active-class="active"
+         disabled-class="disabled"
+         paging-action="update_taxon('test',page,page-size)"
+    >
+    </div>
+</div>
