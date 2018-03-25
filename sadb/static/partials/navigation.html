@@ -1,4 +1,4 @@
-<nav class="navbar navbar-fixed-top"  style="background-color: white">
+<nav class="navbar navbar-fixed-top" ng-controller="navigation" style="background-color: white">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
@@ -27,7 +27,7 @@
                 <li><a href="#">Help/Tutorial</a></li>
             </ul>
             <form class="navbar-form pull-right" accept-charset="UTF-8">
-                <input type="text" class="form-control" style="border-radius:15px 15px 15px 15px"
+                <input type="text" id="search" class="form-control" style="border-radius:15px 15px 15px 15px"
                        placeholder="Search SAG by keywords or ID">
             </form>
         </div><!--/.nav-collapse -->

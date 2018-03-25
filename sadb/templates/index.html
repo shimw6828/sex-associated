@@ -9,18 +9,20 @@
     <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static',filename='lib/angular-tablesort/tablesort.css') }}" rel="stylesheet">
     <link href="{{ url_for('static',filename='css/sadb.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='lib/angular-ui-select/select.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static',filename='lib/angular-ui-select/selectize.css') }}" rel="stylesheet">
     <script src="/static/lib/jquery-3.2.1.min.js"></script>
-    <script src="/static/lib/jquery-ui.min.css"></script>
     <script src="/static/js/bootstrap-select.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
     <script src="{{ url_for('static',filename='lib/angular/angular.js') }}"></script>
+    <script src="{{ url_for('static',filename='lib/angular/angular-sanitize.js') }}"></script>
+    <script src="{{ url_for('static',filename='lib/angular-ui-select/select.js') }}"></script>
     <script src="{{ url_for('static',filename='lib/angular/angular-route.min.js') }}"></script>
     <script src="{{ url_for('static',filename='lib/angular-paging/paging.js') }}"></script>
     <script src="{{ url_for('static',filename='js/app.js') }}"></script>
     <script src="{{ url_for('static',filename='lib/angular-tablesort/angular-tablesort.js') }}"></script>
     <script src="{{ url_for('static',filename='lib/bootstrap3-typeahead/bootstrap3-typeahead.min.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/HomeController.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/testController.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/browseController.js') }}"></script>
+
 
 </head>
 <body>
@@ -32,4 +34,8 @@
 
 <div ng-include="'/static/partials/footer.html'"></div>
 </body>
+    <script src="{{ url_for('static',filename='js/HomeController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/testController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/browseController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/taxonomyController.js') }}"></script>
 </html>

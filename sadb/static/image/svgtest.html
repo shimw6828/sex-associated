@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="200" height="25" fill="none">
+  <g id="gene_exon" fill="#CDCD00">
+    <rect x="117.04035874439462" y="0" width="6.165919282511211" height="25"></rect>
+      <rect x="0" y="0" width="106.39013452914799" height="50"></rect>
+      <rect x="132.847533632287" y="0" width="67.152466367713" height="25"></rect>
+  </g>
+    <g id="intron">
+        <polyline points="106.39013452914799,12.5 111.7152466367713,15 117.04035874439462,12.5" style="fill:none;stroke:black;stroke-width:1"/>
+        <polyline points="123.20627802690582,12.5 128.02690582959642,15 132.847533632287,12.5" style="fill:none;stroke:black;stroke-width:1"/>
+    </g>
+</svg>
+
+
+
+
+gene_start=4222723
+gene_end=4224507
+exon_num=3
+exon[0]={"start":4222723,"end":4223672}
+exon[1]={"start":4223767,"end":4223822}
+exon[2]={"start":4223908,"end":4224507}
+gene_length=gene_end-gene_start
+
+width=(exon[2]["end"]-exon[2]["start"])/float(gene_length)*200
+x=(exon[2]["start"]-gene_start)/float(gene_length)*200
+
+for i in 0:(exon.length-2):
+    intro_start=(exon[i]["end"]-gene_start)/float(gene_length)*200
+    intro_end=(exon[i+1]["start"]-gene_start)/float(gene_length)*200
+    middle=(intro_start+intro_end)/2
