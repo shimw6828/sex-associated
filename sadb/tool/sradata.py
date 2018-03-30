@@ -12,6 +12,8 @@ def import_gene_info(inputfile, Taxon_id):
     tax_list = pd.read_csv("/home/zhangna/SAdatabase/result/ensembl/Species_whole.csv",index_col="Taxon ID",dtype={'index':np.int})
     if Taxon_id not in tax_list.index:
         print "Wrong scientific name, the input not exit in the Species_whole.csv"
+    if db.gene_detail.find_one({"Taxonomy_Id":Taxon_id})==None:
+        print("gene detail not in our db")
     with open(inputfile) as reader:
         header=reader.readline().strip().split(',')
         for line in reader:
@@ -24,6 +26,10 @@ def import_gene_info(inputfile, Taxon_id):
             record["Scientific_name"] = tax_list.loc[Taxon_id,'Scientific name']
             record["Common_name"] = tax_list.loc[Taxon_id,'Common name']
             record["Taxon_id"] = Taxon_id
+            gene_detial=db.gene_detail.find_one({"ensembl_gene_id":record["gene_ID"]})
+            record["external_gene_name"]=gene_detial["external_gene_name"]
+            record["entrezgene"]=gene_detial["entrezgene"]
+            record["chromosome_name"]=gene_detial["chromosome_name"]
             db.total_result.insert_one(record)
 
 

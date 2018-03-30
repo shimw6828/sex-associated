@@ -81,22 +81,31 @@ class get_taxonomy_list(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('page',type=int,default=1)
-        parser.add_argument('per_page', type=int, default=15)
+        parser.add_argument('per_page', type=int, default=20)
         parser.add_argument('taxon_id', type=int)
+        parser.add_argument('filter', type=str)
+        parser.add_argument('sort', type=str,default="default")
         args = parser.parse_args()
         page = args['page']
         per_page = args['per_page']
         record_skip = (page - 1) * per_page
         condition = {}
         condition['Taxon_id'] = args['taxon_id']
-        results = list(mongo.db.total_result.find(condition).skip(record_skip).limit(per_page))
+        if args['filter']:
+            condition["$or"]=[{"gene_ID":{"$regex": args["filter"],"$options": "$i"}},
+                              {"external_gene_name":{"$regex": args["filter"],"$options": "$i"}},
+                              {"chromosome_name":{"$regex": args["filter"],"$options": "$i"}}]
+        if args["sort"]=="default":
+            results = list(mongo.db.total_result.find(condition).skip(record_skip).limit(per_page))
+        elif args["sort"]=="log2FoldChange":
+            results = list(mongo.db.total_result.find(condition).sort([("log2FoldChange", -1)]).skip(record_skip).limit(per_page))
+        elif args["sort"]=="padj":
+            results = list(
+                mongo.db.total_result.find(condition).sort([("padj", -1)]).skip(record_skip).limit(per_page))
         gene_list_count = mongo.db.total_result.find(condition).count()
         gene_list = []
 
         for result in results:
-            gene_detail = mongo.db.gene_detail.find_one({"ensembl_gene_id": result["gene_ID"]})
-            result["external_gene_name"] = gene_detail["external_gene_name"]
-            result["chromosome_name"] = gene_detail["chromosome_name"]
             if type(result["external_gene_name"])==float:
                 result["external_gene_name"]=""
             gene_list.append(result)

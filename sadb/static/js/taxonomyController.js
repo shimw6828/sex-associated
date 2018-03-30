@@ -3,6 +3,7 @@ angular.module('sadb')
 
 function taxonomyController($scope,$http,$routeParams,sadbService) {
 var base_url = sadbService.getAPIBaseUrl();
+
     $scope.taxons= [{ Taxonomy_Id: 7918, Common_name: 'Spotted gar' },
                    {Taxonomy_Id: 2, Common_name: 'second' },
                    {Taxonomy_Id: 3, Common_name: 'third' },
@@ -27,12 +28,24 @@ var base_url = sadbService.getAPIBaseUrl();
         )
     };
     $scope.get_taxon();
+    $("input").keyup(function(event){
+        if(event.keyCode ==13){
+             $scope.update_taxon("test",1,15);
+        }
+    });
 
-    $scope.update_taxon = function (test,page,size) {
-        console.log("work")
+
+    $scope.update_taxon = function (test,page,size,sort) {
+        console.log(sort)
+        if ($scope.gene_list_count<15)
+        {var filter_search = $('#filter_search_2').val();
+         $('#filter_search').val("")}
+        else
+        {var filter_search = $('#filter_search').val();}
+        console.log(filter_search)
         $http({
             url: base_url+'/api/taxonomy_list',
-            params: {taxon_id:$routeParams.taxonomy,page:page},
+            params: {taxon_id:$routeParams.taxonomy,page:page,filter:filter_search},
             method: 'GET'
         }).then(
             function (response) {

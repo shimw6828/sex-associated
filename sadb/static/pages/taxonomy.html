@@ -12,7 +12,9 @@
         </ui-select-choices>
         </ui-select>
     </div>
-
+    <form class="pull-right"  accept-charset="UTF-8"  ng-hide="gene_list_count>15">
+        <input type="text" id="filter_search_2" class="form-control" >
+    </form>
 
 </div>
 
@@ -20,10 +22,10 @@
 
 
 <div class="row">
-<div class="col-md-6" style="padding:0">
+<div class="col-md-7" style="padding:0">
     <div paging
          page="currentPage"
-         page-size=15
+         page-size=20
          total="gene_list_count"
          scroll-top="true"
          hide-if-empty="true"
@@ -43,8 +45,8 @@
     >
     </div></div>
 
-        <form class="pull-right" style="transform: translateY(50%)" accept-charset="UTF-8">
-        <input type="text" class="form-control" >
+    <form class="pull-right" style="transform: translateY(50%)" accept-charset="UTF-8"  ng-show="gene_list_count >= 15">
+        <input type="text" id="filter_search" class="form-control" >
     </form>
 
 </div>
@@ -57,7 +59,7 @@
             <th style="text-align: center" ts-criteria="SRA ID">SRA ID</th>
             <th style="text-align: center" ts-criteria="Chromosome">Chromosome</th>
             <th style="text-align: center" ts-criteria="log2FoldChange|parseFloat">log2FoldChange</th>
-            <th style="text-align: center" ts-criteria="padj|parseFloat">padj</th>
+            <th style="text-align: center" ts-criteria="padj|parseFloat" >padj</th>
         </tr>
         </thead>
             <tr ng-repeat="gene in gene_list" ts-repeat>
@@ -79,7 +81,7 @@
     </table>
     <div paging
          page="currentPage"
-         page-size=15
+         page-size=20
          total="gene_list_count"
          scroll-top="true"
          hide-if-empty="true"
@@ -95,7 +97,7 @@
          ul-class="pagination"
          active-class="active"
          disabled-class="disabled"
-         paging-action="update_taxon('test',page,page-size)"
+         paging-action="update_taxon('default',page,page-size)"
     >
     </div>
 </div>
