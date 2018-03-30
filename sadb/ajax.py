@@ -85,23 +85,27 @@ class get_taxonomy_list(Resource):
         parser.add_argument('taxon_id', type=int)
         parser.add_argument('filter', type=str)
         parser.add_argument('sort', type=str,default="default")
+        parser.add_argument('min', type=str)
+        parser.add_argument('max', type=str)
         args = parser.parse_args()
         page = args['page']
         per_page = args['per_page']
         record_skip = (page - 1) * per_page
         condition = {}
         condition['Taxon_id'] = args['taxon_id']
+        condition["padj"]={"$gte":0,"$lte":1}
         if args['filter']:
             condition["$or"]=[{"gene_ID":{"$regex": args["filter"],"$options": "$i"}},
                               {"external_gene_name":{"$regex": args["filter"],"$options": "$i"}},
                               {"chromosome_name":{"$regex": args["filter"],"$options": "$i"}}]
-        if args["sort"]=="default":
-            results = list(mongo.db.total_result.find(condition).skip(record_skip).limit(per_page))
-        elif args["sort"]=="log2FoldChange":
-            results = list(mongo.db.total_result.find(condition).sort([("log2FoldChange", -1)]).skip(record_skip).limit(per_page))
-        elif args["sort"]=="padj":
-            results = list(
-                mongo.db.total_result.find(condition).sort([("padj", -1)]).skip(record_skip).limit(per_page))
+        if args['min'] :
+            condition["padj"]["$gte"]= float(args['min'])
+        if args['max']:
+            condition["padj"]["$lte"] = float(args['max'])
+
+
+        results = list(mongo.db.total_result.find(condition).sort([("padj",-1)]).skip(record_skip).limit(per_page))
+
         gene_list_count = mongo.db.total_result.find(condition).count()
         gene_list = []
 

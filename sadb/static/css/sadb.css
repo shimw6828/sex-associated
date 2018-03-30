@@ -68,3 +68,9 @@ ul.variation_consequence_tree li a.leaf {
   position: relative;
   z-index: 10000; /* The select2 dropdown has a z-index of 9999 */
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0;
+}

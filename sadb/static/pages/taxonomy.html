@@ -12,6 +12,7 @@
         </ui-select-choices>
         </ui-select>
     </div>
+
     <form class="pull-right"  accept-charset="UTF-8"  ng-hide="gene_list_count>15">
         <input type="text" id="filter_search_2" class="form-control" >
     </form>
@@ -44,8 +45,13 @@
          paging-action="update_taxon('test',page,page-size)"
     >
     </div></div>
-
-    <form class="pull-right" style="transform: translateY(50%)" accept-charset="UTF-8"  ng-show="gene_list_count >= 15">
+    <form class="form-inline" style="transform: translateY(90%)" ng-show="gene_list_count >= 15">
+        padj:
+        <input type="number" id="min" style="width: 40px"  >
+        ~
+        <input type="number" id="max" style="width: 40px"  >
+    </form>
+    <form class="pull-right" style="transform: translateY(-20%)" accept-charset="UTF-8"  ng-show="gene_list_count >= 15">
         <input type="text" id="filter_search" class="form-control" >
     </form>
 

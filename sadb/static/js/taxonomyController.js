@@ -39,13 +39,22 @@ var base_url = sadbService.getAPIBaseUrl();
         console.log(sort)
         if ($scope.gene_list_count<15)
         {var filter_search = $('#filter_search_2').val();
-         $('#filter_search').val("")}
+         $('#filter_search').val("");
+         $('#min').val("");
+         var min=$('#min').val();
+         $('#max').val("");
+         var max=$('#max').val();}
         else
-        {var filter_search = $('#filter_search').val();}
+        {var filter_search = $('#filter_search').val();
+        var min=$('#min').val();
+        var max=$('#max').val()}
+
         console.log(filter_search)
+        console.log(typeof(min))
+        console.log(max)
         $http({
             url: base_url+'/api/taxonomy_list',
-            params: {taxon_id:$routeParams.taxonomy,page:page,filter:filter_search},
+            params: {taxon_id:$routeParams.taxonomy,page:page,filter:filter_search,min:min,max:max},
             method: 'GET'
         }).then(
             function (response) {
