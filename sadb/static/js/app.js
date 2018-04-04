@@ -15,7 +15,7 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
                 templateUrl:"/static/pages/taxonomy.html",
                 controller: "taxonomyController"
             })
-            .when("/gene_info",{
+            .when("/query",{
                 templateUrl:"/static/pages/test.html",
                 controller: "testController"
             })
