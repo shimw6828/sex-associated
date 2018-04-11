@@ -4,7 +4,7 @@ import json
 from sadb import app, api
 from sadb.core import mongo
 from flask_restful import Resource, fields, marshal_with, reqparse, marshal
-
+#coding=utf-8
 
 
 test_fields = {
@@ -116,6 +116,80 @@ class get_taxonomy_list(Resource):
         return {"gene_list":gene_list,"gene_list_count":gene_list_count}
 api.add_resource(get_taxonomy_list,'/api/taxonomy_list')
 
+
+get_detail_fields={
+    'description':fields.String,
+    'hgnc_id':fields.String,
+    'ensembl_gene_id':fields.String,
+    'start_position':fields.Integer,
+    'Taxonomy_Id':fields.Integer,
+    'end_position':fields.Integer,
+    'entrezgene':fields.String,
+    'gene_biotype':fields.String,
+    'chromosome_name':fields.String,
+    'external_gene_name':fields.String
+}
+class get_detail(Resource):
+    @marshal_with(get_detail_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        result=mongo.db.gene_detail.find_one(condition)
+        if str(result["entrezgene"])=="nan":
+            result["entrezgene"]=str(result["entrezgene"])
+        else:
+            result["entrezgene"]=int(result["entrezgene"])
+        return result
+api.add_resource(get_detail,'/api/get_detail')
+
+
+get_summary_fields={
+    'synonyms':fields.String,
+    'summary':fields.String
+}
+class get_summary(Resource):
+    @marshal_with(get_summary_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        result=mongo.db.summary.find_one(condition)
+        if not result:
+            result={'ensembl_gene_id':args['gene'] , 'synonyms': "", 'summary': None}
+        else:
+            synonyms=""
+            for i in result["synonyms"]:
+                synonyms = synonyms + i +" "
+            result["synonyms"]=synonyms.encode()
+        return result
+
+api.add_resource(get_summary,'/api/get_summary')
+
+get_drug_info_fields={
+    'DrugBank_ID':fields.String,
+    'ensembl_gene_id':fields.String,
+    "Drug_name": fields.String,
+    'UniProt_Name': fields.String,
+    'Type': fields.String,
+    'UniProt ID': fields.String
+}
+class get_drug_info(Resource):
+    @marshal_with(get_drug_info_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        result=list(mongo.db.drug_info.find(condition))
+        return result
+
+api.add_resource(get_drug_info,'/api/get_drug_info')
 
 
 
