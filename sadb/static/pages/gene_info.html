@@ -1,4 +1,38 @@
-<div class="container">
+<div class="main-container">
+    <div >
+        <a href="#/"><img src="/static/image/top.png" style="width: 100%;height: 100px"></a>
+    </div>
+    <div class="container">
+        <section id="basic_info">
+            <div class="page-header">
+                <h2>Gene information</h2>
+            </div>
+            <dl class="dl-horizontal">
+                <dt>Ensembl ID</dt>
+                <dd><a href="{{ url }}" target="_blank">{{ gene_id }}</a></dd>
+                <dt ng-hide="gene_detail.entrezgene=='nan'">Gene ID</dt>
+                <dd ng-hide="gene_detail.entrezgene=='nan'"><a href="http://www.ncbi.nlm.nih.gov/gene/{{ gene_detail.entrezgene }}" target="_blank">{{ gene_detail.entrezgene }}</a></dd>
+                <dt ng-hide="gene_detail.external_gene_name=='nan'">Gene Symbol</dt>
+                <dd ng-hide="gene_detail.external_gene_name=='nan'">{{ gene_detail.external_gene_name}}</dd>
+                <dt ng-hide="get_summary.synonyms==''">Alias</dt>
+                <dd ng-hide="get_summary.synonyms==''">{{ get_summary.synonyms}}</dd>
+                <dt ng-hide="gene_detail.description=='nan'">Full Name</dt>
+                <dd ng-hide="gene_detail.description=='nan'">{{ gene_detail.description }}</dd>
+                <dt>Gene Type</dt>
+                <dd>{{ gene_detail.gene_biotype }}</dd>
+                <dt>Length</dt>
+                <dd>{{ gene_detail.end_position-gene_detail.start_position }}</dd>
+                <dt>Position</dt>
+                <dd>Chromosome {{ gene_detail.chromosome_name }}: {{ gene_detail.start_position }} - {{ gene_detail.end_position }}</dd>
+                <dt ng-hide="gene_detail.hgnc_id=='nan'">HGNC</dt>
+                <dd ng-hide="gene_detail.hgnc_id=='nan'"><a href="www.genenames.org/cgi-bin/gene_symbol_report?q=data/hgnc_data.php&hgnc_id={{ gene_detail.hgnc_id }}" target="_blank">{{ gene_detail.hgnc_id }}</a></dd>
+
+
+            </dl>
+        </section>
+        <div ng-bind-html="gene_model"></div>
+    </div>
+
 
 
 </div>

@@ -19,6 +19,10 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
                 templateUrl:"/static/pages/test.html",
                 controller: "testController"
             })
+            .when("/gene_info",{
+                templateUrl:"/static/pages/gene_info.html",
+                controller: "geneinfoController"
+            })
             .when("/browse",{
                 templateUrl:"/static/pages/browse.html",
                 controller: "browseController"
@@ -39,7 +43,6 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
     })
     .controller('navigation', navigation);
     function navigation($scope,$http,$routeParams,sadbService) {
-        console.log("navi work")
         $("input").keyup(function(event){
             if(event.keyCode ==13){
             $scope.search_query();
@@ -51,7 +54,7 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
         var query_item = $('#search').val();
 
         if(/[@#\$%\^&\*]+/g.test(query_item)){
-            console.log(query_item)
+            console.log(query_item);
             alert("Invalid input");
             flag=1;
             history.back();

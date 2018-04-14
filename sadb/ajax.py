@@ -137,12 +137,12 @@ class get_detail(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-        result=mongo.db.gene_detail.find_one(condition)
-        if str(result["entrezgene"])=="nan":
-            result["entrezgene"]=str(result["entrezgene"])
+        detail=mongo.db.gene_detail.find_one(condition)
+        if str(detail["entrezgene"])=="nan":
+            detail["entrezgene"]=str(detail["entrezgene"])
         else:
-            result["entrezgene"]=int(result["entrezgene"])
-        return result
+            detail["entrezgene"]=int(detail["entrezgene"])
+        return detail
 api.add_resource(get_detail,'/api/get_detail')
 
 
@@ -158,15 +158,15 @@ class get_summary(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-        result=mongo.db.summary.find_one(condition)
-        if not result:
-            result={'ensembl_gene_id':args['gene'] , 'synonyms': "", 'summary': None}
+        summary=mongo.db.summary.find_one(condition)
+        if not summary:
+            summary={'ensembl_gene_id':args['gene'] , 'synonyms': "", 'summary': None}
         else:
             synonyms=""
-            for i in result["synonyms"]:
+            for i in summary["synonyms"]:
                 synonyms = synonyms + i +" "
-            result["synonyms"]=synonyms.encode()
-        return result
+                summary["synonyms"]=synonyms.encode()
+        return summary
 
 api.add_resource(get_summary,'/api/get_summary')
 
@@ -186,10 +186,220 @@ class get_drug_info(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-        result=list(mongo.db.drug_info.find(condition))
-        return result
-
+        drug_info=list(mongo.db.drug_info.find(condition))
+        return drug_info
 api.add_resource(get_drug_info,'/api/get_drug_info')
+
+
+get_transcript_fields={
+    "start_position":fields.String,
+    "ensembl_transcript_id": fields.String,
+    "transcript_biotype": fields.String,
+    "ensembl_peptide_id": fields.String,
+    "end_position": fields.String,
+    "transcript_length": fields.String,
+    "ensembl_gene_id": fields.String
+}
+
+get_gene_structures_fields={
+    'transcript': fields.List(fields.Nested(get_transcript_fields)),
+    'gene_model': fields.String
+}
+class get_gene_structures(Resource):
+    @marshal_with(get_gene_structures_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        structures=list(mongo.db.gene_structures.find(condition))
+        gene_start=structures[0]["start_position"]
+        gene_end=structures[0]["end_position"]
+        gene_length=gene_end-gene_start
+        transcription = []
+        for transcript in structures:
+            transcription.append({"exon":transcript["exons"],"ensembl_transcript_id":transcript["ensembl_transcript_id"]})
+        gap = gene_length / 10
+        svgs = ''
+        scale = '<svg width="980" height="30">\n'
+        scale = scale + '<line x1="0" y1="50%" x2="800" y2="50%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="0" y1="60%" x2="0" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="80" y1="60%" x2="80" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="160" y1="60%" x2="160" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="240" y1="60%" x2="240" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="320" y1="60%" x2="320" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="400" y1="60%" x2="400" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="480" y1="60%" x2="480" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="560" y1="60%" x2="560" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="640" y1="60%" x2="640" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="720" y1="60%" x2="720" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<line x1="800" y1="60%" x2="800" y2="40%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+        scale = scale + '<text x="0" y="8" font-family="Verdana" font-size="10">' + str(round(gene_start / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="80" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 1) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="160" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 2) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="240" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 3) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="320" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 4) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="400" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 5) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="480" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 6) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="560" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 7) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="640" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 8) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="720" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 9) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '<text x="800" y="8" font-family="Verdana" font-size="10" text-anchor="middle">' + str(round((gene_start + gap * 10) / 1000000.0, 2)) + 'Mb' + '</text>\n'
+        scale = scale + '</svg>\n'
+        svgs = svgs + scale
+        for i in transcription:
+            svg = '<svg width="980" height="10">\n'
+            polylines='<line x1="0" y1="50%" x2="800" y2="50%" style="stroke:rgb(255,0,0);stroke-width:2" />\n'
+            rects = '<g fill="#CDCD00">\n'
+            for m in i['exon']:
+                width = (m["exon_chrom_end"] - m["exon_chrom_start"]) / float(gene_length) * 800
+                x = (m["exon_chrom_start"] - gene_start) / float(gene_length) * 800
+                rect = '<rect x="' + str(x) + '" y="0" width="' + str(width) + '" height="10"></rect>\n'
+                rects = rects + rect
+            rects = rects + "</g>\n"
+            text = '<text x="810" y="50%" dy=".3em" fill="black" font-size="12">' + i["ensembl_transcript_id"] + '</text>\n'
+            svg = svg + polylines + rects + text + '</svg>\n'
+            svgs = svgs + svg
+        gene_structures={"transcript": structures, "gene_model": svgs}
+        return gene_structures
+api.add_resource(get_gene_structures,'/api/get_gene_structures')
+
+
+get_go_terms_fields={
+    "go_linkage_type":fields.String,
+    "namespace_1003":fields.String,
+    "ensembl_gene_id": fields.String,
+    "go_id": fields.String,
+    "name_1006": fields.String
+}
+class get_go_terms(Resource):
+    @marshal_with(get_go_terms_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        go_terms=list(mongo.db.go_terms.find(condition))
+        return go_terms
+api.add_resource(get_go_terms,'/api/get_go_terms')
+
+
+get_homolog_fields={
+    "ortholog":fields.String,
+    "homolog_perc_id_r1":fields.Float,
+    "homolog_perc_id": fields.Float,
+    "homolog_wga_coverage": fields.String,
+    "ortholog_external_gene_name": fields.String,
+    "external_gene_name": fields.String,
+    "homolog_orthology_confidence": fields.String,
+    "ensembl_gene_id": fields.String
+}
+class get_homolog(Resource):
+    @marshal_with(get_homolog_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        homolog=list(mongo.db.homolog.find(condition))
+        return homolog
+api.add_resource(get_homolog,'/api/get_homolog')
+
+
+get_paralogue_fields={
+    "paralog_ensembl_gene":fields.String,
+    'paralog_gene_name': fields.String,
+    "ensembl_gene_id": fields.String,
+    'external_gene_name': fields.String,
+}
+class get_paralogue(Resource):
+    @marshal_with(get_paralogue_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        result=list(mongo.db.paralogue.find(condition))
+        paralogue=[]
+        for i in result:
+            k={}
+            k["paralog_ensembl_gene"]=i["paralog_ensembl_gene"]
+            k["paralog_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :k["paralog_ensembl_gene"]},{"external_gene_name":1})["external_gene_name"]
+            k["ensembl_gene_id"]=i["ensembl_gene_id"]
+            k["external_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :k["ensembl_gene_id"]},{"external_gene_name":1})["external_gene_name"]
+            paralogue.append(k)
+        return paralogue
+api.add_resource(get_paralogue,'/api/get_paralogue')
+
+get_proteins_fields={
+    "pfam":fields.String,
+    "pfam_end": fields.String,
+    "ensembl_gene_id": fields.String,
+    "pfam_start": fields.String,
+    "ensembl_peptide_id": fields.String
+}
+class get_proteins(Resource):
+    @marshal_with(get_proteins_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        proteins=list(mongo.db.proteins.find(condition))
+        return proteins
+api.add_resource(get_proteins,'/api/get_proteins')
+
+
+get_result_fields={
+    "stat":fields.String,
+    "baseMean": fields.Float,
+    "Scientific_name": fields.String,
+    "padj": fields.Float,
+    "gene_ID": fields.String,
+    "external_gene_name": fields.String,
+    "Taxon_id": fields.String,
+    "entrezgene": fields.String,
+    "lfcSE": fields.Float,
+    "log2FoldChange": fields.Float,
+    "Common_name": fields.String,
+    "chromosome_name": fields.String,
+    "pvalue": fields.Float,
+    "SRA_ID": fields.String
+}
+get_analysis_fields={
+    'analysis': fields.List(fields.Nested(get_result_fields)),
+    'url': fields.String
+}
+
+class get_analysis(Resource):
+    @marshal_with(get_analysis_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["gene_ID"] = args['gene']
+        analysis=list(mongo.db.total_result.find(condition))
+        taxname=analysis[0]["Scientific_name"].replace(" ","_").encode()
+        url="http://asia.ensembl.org/"+taxname+"/Gene/Summary?g="+condition["gene_ID"]
+        return {"analysis":analysis,"url":url}
+api.add_resource(get_analysis,'/api/analysis')
+
+# get_gene_info_fields={}
+#
+# class get_gene_info(Resource):
+#     @marshal_with(get_gene_info_fields)
+#     def get(self):
+#         parser = reqparse.RequestParser()
+#         parser.add_argument('gene', type=str)
+#         args = parser.parse_args()
+#         condition = {}
+#         condition["ensembl_gene_id"] = args['gene']
 
 
 

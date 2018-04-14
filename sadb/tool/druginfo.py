@@ -21,12 +21,14 @@ def main():
         request = urllib2.Request(url, data)
         contact = ""  # Please set your email address here to help us debug in case of problems.
         request.add_header('User-Agent', 'Python %s' % contact)
-        response = urllib2.urlopen(request)
+        try:
+            response = urllib2.urlopen(request)
+        except:
+            print(fields["DrugBank ID"]+"\t"+fields["UniProt ID"]+"\tnot found")
+            continue
         page = response.read()
-        if len(page.split("\n"))>3:
-            print(fields["UniProt ID"]+"\tmany")
         if len(page.split("\n"))<3:
-            print(fields["UniProt ID"]+"\tzero")
+            print(fields["DrugBank ID"]+"\t"+fields["UniProt ID"]+"\tzero")
         for lists in page.split("\n")[1:-1]:
             temp=list(fields.values)
             ensembl_id = lists.split("\t")[1]

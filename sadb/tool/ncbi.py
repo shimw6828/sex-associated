@@ -11,7 +11,11 @@ def main(taxon):
     for result in query:
         ec = eutils.Client()
         id=int(result["entrezgene"])
-        gene=ec.efetch(db='gene',id=id)
+        try:
+            gene=ec.efetch(db='gene',id=id)
+        except:
+            print(result["entrezgene"]+"\t"+result["ensembl_gene_id"]+"not fonund")
+            continue
         detail=gene.entrezgenes[0]
         summary = detail.summary
         synonyms=detail.synonyms

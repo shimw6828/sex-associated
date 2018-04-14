@@ -29,3 +29,6 @@ for result in results:
 db.total_result.aggregate([{
     {"$match":}
 }])
+condition = {}
+condition["ensembl_gene_id"] = "ENSLOCG00000000020"
+ss=db.gene_detail.find_one(condition)
