@@ -39,6 +39,10 @@ def import_gene_structures():
                   'end_position': structures['end_position'].values[0],
                   'transcript_length': structures['transcript_length'].values[0],
                   'ensembl_peptide_id': structures['ensembl_peptide_id'].values[0],
+                  'transcript_start': structures['transcript_start'].values[0],
+                  'transcript_end': structures['transcript_end'].values[0],
+                  'cds_length': structures['cds_length'].values[0],
+                  'uniprotsptrembl': structures['uniprotsptrembl'].values[0],
                   'transcript_biotype': structures['transcript_biotype'].values[0],
                   'exons': []
                   }
