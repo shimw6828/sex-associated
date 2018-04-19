@@ -68,6 +68,7 @@
             <th style="text-align: center" ts-criteria="padj|parseFloat" >padj</th>
         </tr>
         </thead>
+        <tbody>
             <tr ng-repeat="gene in gene_list" ts-repeat>
                  <td>
                     <a href="#/gene_info?gene={{ gene.gene_ID }}" target="_self" ng-click="gene_detail()">
@@ -81,7 +82,7 @@
                 <td style="text-align: center">{{ gene.log2FoldChange }}</td>
                 <td style="text-align: center">{{ gene.padj }}</td>
             </tr>
-        <tbody>
+
 
         </tbody>
     </table>
