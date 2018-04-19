@@ -53,13 +53,8 @@ phenotype=c('ensembl_gene_id',
 
 pathway=c('ensembl_gene_id','kegg_enzyme')
 
-paralogue=c('ensembl_gene_id',
-            paste(tolower(substring(strsplit(science_name," ")[[1]][1],1,1)),strsplit(science_name," ")[[1]][2],"_paralog_ensembl_gene",sep = ""),
-            paste(tolower(substring(strsplit(science_name," ")[[1]][1],1,1)),strsplit(science_name," ")[[1]][2],"_paralog_associated_gene_name",sep = ""),
-            paste(tolower(substring(strsplit(science_name," ")[[1]][1],1,1)),strsplit(science_name," ")[[1]][2],"_paralog_chromosome",sep = ""),
-            paste(tolower(substring(strsplit(science_name," ")[[1]][1],1,1)),strsplit(science_name," ")[[1]][2],"_paralog_chrom_start",sep = ""),
-            paste(tolower(substring(strsplit(science_name," ")[[1]][1],1,1)),strsplit(science_name," ")[[1]][2],"_paralog_chrom_end",sep = ""))
-
+paralogue=c('ensembl_gene_id',paste(tolower(substring(strsplit(science_name," ")[[1]][1],1,1)),
+                                    strsplit(science_name," ")[[1]][2],"_paralog_ensembl_gene",sep = ""))
 
 
 
