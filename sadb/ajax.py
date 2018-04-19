@@ -198,7 +198,12 @@ get_transcript_fields={
     "ensembl_peptide_id": fields.String,
     "end_position": fields.String,
     "transcript_length": fields.String,
-    "ensembl_gene_id": fields.String
+    "ensembl_gene_id": fields.String,
+    "transcript_end" :fields.String,
+    "transcript_start":fields.String,
+    "cds_length":fields.String,
+    "uniprotsptrembl":fields.String
+
 }
 
 get_gene_structures_fields={
@@ -269,7 +274,6 @@ api.add_resource(get_gene_structures,'/api/get_gene_structures')
 get_go_terms_fields={
     "go_linkage_type":fields.String,
     "namespace_1003":fields.String,
-    "ensembl_gene_id": fields.String,
     "go_id": fields.String,
     "name_1006": fields.String
 }
@@ -312,6 +316,9 @@ api.add_resource(get_homolog,'/api/get_homolog')
 get_paralogue_fields={
     "paralog_ensembl_gene":fields.String,
     'paralog_gene_name': fields.String,
+    'paralog_gene_chromosome':fields.String,
+    'paralog_gene_start':fields.Integer,
+    'paralog_gene_end':fields.Integer,
     "ensembl_gene_id": fields.String,
     'external_gene_name': fields.String,
 }
@@ -328,7 +335,11 @@ class get_paralogue(Resource):
         for i in result:
             k={}
             k["paralog_ensembl_gene"]=i["paralog_ensembl_gene"]
-            k["paralog_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :k["paralog_ensembl_gene"]},{"external_gene_name":1})["external_gene_name"]
+            paralog_gene=mongo.db.gene_detail.find_one({"ensembl_gene_id": k["paralog_ensembl_gene"]})
+            k["paralog_gene_name"]=paralog_gene["external_gene_name"]
+            k["paralog_gene_chromosome"]=paralog_gene['chromosome_name']
+            k["paralog_gene_start"]=paralog_gene['start_position']
+            k["paralog_gene_end"] = paralog_gene['end_position']
             k["ensembl_gene_id"]=i["ensembl_gene_id"]
             k["external_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :k["ensembl_gene_id"]},{"external_gene_name":1})["external_gene_name"]
             paralogue.append(k)
@@ -338,7 +349,6 @@ api.add_resource(get_paralogue,'/api/get_paralogue')
 get_proteins_fields={
     "pfam":fields.String,
     "pfam_end": fields.String,
-    "ensembl_gene_id": fields.String,
     "pfam_start": fields.String,
     "ensembl_peptide_id": fields.String
 }
@@ -373,7 +383,7 @@ get_result_fields={
 }
 get_analysis_fields={
     'analysis': fields.List(fields.Nested(get_result_fields)),
-    'url': fields.String
+    'taxname': fields.String
 }
 
 class get_analysis(Resource):
@@ -386,9 +396,28 @@ class get_analysis(Resource):
         condition["gene_ID"] = args['gene']
         analysis=list(mongo.db.total_result.find(condition))
         taxname=analysis[0]["Scientific_name"].replace(" ","_").encode()
-        url="http://asia.ensembl.org/"+taxname+"/Gene/Summary?g="+condition["gene_ID"]
-        return {"analysis":analysis,"url":url}
+        return {"analysis":analysis,"taxname":taxname}
 api.add_resource(get_analysis,'/api/analysis')
+
+get_phenotypes_fields={
+    "phenotype_description":fields.String,
+    "study_external_id": fields.String,
+    "source_name": fields.String
+}
+class get_phenotypes(Resource):
+    @marshal_with(get_phenotypes_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('gene', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["ensembl_gene_id"] = args['gene']
+        phenotypes=list(mongo.db.phenotype.find(condition))
+        return phenotypes
+api.add_resource(get_phenotypes,'/api/get_phenotypes')
+
+
+
 
 # get_gene_info_fields={}
 #

@@ -9,7 +9,7 @@
             </div>
             <dl class="dl-horizontal">
                 <dt>Ensembl ID</dt>
-                <dd><a href="{{ url }}" target="_blank">{{ gene_id }}</a></dd>
+                <dd><a href="http://www.ensembl.org/{{ taxname }}/Gene/Summary?g={{ gene_id }}" target="_blank">{{ gene_id }}</a></dd>
                 <dt ng-hide="gene_detail.entrezgene=='nan'">Gene ID</dt>
                 <dd ng-hide="gene_detail.entrezgene=='nan'"><a href="http://www.ncbi.nlm.nih.gov/gene/{{ gene_detail.entrezgene }}" target="_blank">{{ gene_detail.entrezgene }}</a></dd>
                 <dt ng-hide="gene_detail.external_gene_name=='nan'">Gene Symbol</dt>
@@ -26,11 +26,248 @@
                 <dd>Chromosome {{ gene_detail.chromosome_name }}: {{ gene_detail.start_position }} - {{ gene_detail.end_position }}</dd>
                 <dt ng-hide="gene_detail.hgnc_id=='nan'">HGNC</dt>
                 <dd ng-hide="gene_detail.hgnc_id=='nan'"><a href="www.genenames.org/cgi-bin/gene_symbol_report?q=data/hgnc_data.php&hgnc_id={{ gene_detail.hgnc_id }}" target="_blank">{{ gene_detail.hgnc_id }}</a></dd>
-
+                <dt ng-hide="get_summary.summary==null">Summary</dt>
+                <dd ng-hide="get_summary.summary==null">{{ get_summary.summary }}</dd>
+                <br>
+                <dt>Transcripts</dt>
+                <br>
 
             </dl>
+            <div class="con panel panel-default">
+                    <table class="table table-hover table-bordered img-rounded" ts-wrapper style="margin-bottom: 0px">
+                    <thead>
+                        <tr>
+                            <th>Transcript ID</th>
+                            <th> start</th>
+                            <th>end</th>
+                            <th>Length (bp)	</th>
+                            <th>Protein ID</th>
+                            <th>Length (aa)</th>
+                            <th>UniProtKB ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="tran in transcript" ts-repeat>
+                            <td style="text-align: center">
+                                <a href="http://www.ensembl.org/{{ taxname }}/Transcript/Summary?db=core;t={{ tran.ensembl_transcript_id }}" target="_blank">{{ tran.ensembl_transcript_id }}</a>
+                            </td>
+                            <td>{{ tran.transcript_start }}</td>
+                            <td>{{ tran.transcript_end }}</td>
+                            <td>{{ tran.transcript_length }}</td>
+                            <td>{{ tran.ensembl_peptide_id }}</td>
+                            <td>{{ tran.cds_length/3 }}</td>
+                            <td>
+                                <a href="http://www.uniprot.org/uniprot/{{ tran.uniprotsptrembl }}" target="_blank">{{ tran.uniprotsptrembl }}</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
         </section>
-        <div ng-bind-html="gene_model"></div>
+        <section id="analysis">
+            <div class="page-header">
+                <h2>Gene analysis</h2>
+            </div>
+            <img></img>
+            <div class="con panel panel-default">
+                <table class="table table-hover table-bordered" ts-wrapper>
+                    <thead>
+                    <tr>
+                        <th>Gene ID</th>
+                        <th>SRP</th>
+                        <th>SRX</th>
+                        <th>group name</th>
+                        <th>log2FoldChange</th>
+                        <th>padj</th>
+                        <th>pvalue</th>
+                        <th>FPKM</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="" ts-repeat>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="gene_model">
+            <div class="page-header">
+                <h2>Gene Model</h2>
+            </div>
+            <div ng-bind-html="gene_model" class="gene_model"></div>
+        </section>
+        <section id="protein">
+            <div class="page-header">
+                <h2>Protein</h2>
+            </div>
+            <div class="con panel panel-default">
+                <table class="table table-hover table-bordered" ts-wrapper>
+                    <thead>
+                    <tr>
+                        <th>Protein ID</th>
+                        <th>start</th>
+                        <th>end</th>
+                        <th>pfam</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="protein in proteins" ts-repeat>
+                        <td><a href="http://asia.ensembl.org/{{ taxname }}/Transcript/ProteinSummary?db=core;p={{ protein.ensembl_peptide_id }}" target="_blank">{{ protein.ensembl_peptide_id }}</a></td>
+                        <td>{{ protein.pfam_start }}</td>
+                        <td>{{ protein.pfam_end }}</td>
+                        <td><a href="https://pfam.xfam.org/family/{{ protein.pfam }}" target="_blank">{{ protein.pfam }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="drug_info" ng-hide="get_drug_info.length==0">
+            <div class="page-header">
+                <h2>Drug Target</h2>
+            </div>
+            <div class="con panel panel-default">
+                <table class="table table-hover table-bordered" ts-wrapper>
+                    <thead>
+                    <tr>
+                        <th>DrugBank ID</th>
+                        <th>Drug Name</th>
+                        <th>Type</th>
+                        <th>UniProt Name</th>
+                        <th>UniProt ID</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="drug_info in get_drug_info" ts-repeat>
+                        <td><a href="https://www.drugbank.ca/drugs/{{ drug_info.DrugBank_ID }}">{{ drug_info.DrugBank_ID }}</a></td>
+                        <td>{{ drug_info.Drug_name }}</td>
+                        <td>{{ drug_info.Type }}</td>
+                        <td>{{ drug_info.UniProt_Name }}</td>
+                        <td><a href="http://www.uniprot.org/uniprot/{{ drug_info["UniProt ID"] }}">{{ drug_info["UniProt ID"] }}</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="gene_ontology" ng-show="go_terms.length>0">
+            <div class="page-header">
+                <h2>Gene Ontology</h2>
+            </div>
+            <div class="con panel panel-default">
+                <table class="table table-hover table-bordered" ts-wrapper>
+                    <thead>
+                    <tr>
+                        <th>GO ID</th>
+                        <th>GO Term</th>
+                        <th>Category</th>
+                        <th>Evidence</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="go_term in go_terms" ts-repeat>
+                        <td><a href="http://amigo.geneontology.org/amigo/term/{{ go_term.go_id }}">{{ go_term.go_id }}</a></td>
+                        <td>{{ go_term.name_1006 }}</td>
+                        <td>{{ go_term.namespace_1003 }}</td>
+                        <td>{{ go_term.go_linkage_type }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="phenotype" ng-hide="phenotypes.length==0">
+            <div class="page-header">
+                <h2>Phenotype</h2>
+            </div>
+            <div class="con panel panel-default">
+                <table class="table table-hover table-bordered" ts-wrapper>
+                    <thead>
+                    <tr>
+                        <th>Phenotype</th>
+                        <th>Reference ID</th>
+                        <th>Source</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="phenotype in phenotypes" ts-repeat>
+                        <td><a href="http://amigo.geneontology.org/amigo/term/{{ phenotype.study_external_id }}">{{ phenotype.phenotype_description }}</a></td>
+                        <td>{{ phenotype.study_external_id }}</td>
+                        <td>{{ phenotype.source_name }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="paralog" ng-hide="paralogue==0">
+            <div class="page-header">
+                <h2>Paralog</h2>
+            </div>
+            <div class="con panel panel-default">
+                <table class="table table-hover table-bordered" ts-wrapper>
+                    <thead>
+                    <tr>
+                        <th>Ensembl ID</th>
+                        <th>Symbol</th>
+                        <th>Paralog</th>
+                        <th>Symbol</th>
+                        <th>Chromosome</th>
+                        <th>start</th>
+                        <th>end</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="paralog in paralogue" ts-repeat>
+                        <td>{{ paralog.ensembl_gene_id }}</td>
+                        <td>{{ paralog.external_gene_name }}</td>
+                        <td><a href="#/gene_info?gene={{ paralog.paralog_ensembl_gene }}" target="_blank">{{ paralog.paralog_ensembl_gene }}</a></td>
+                        <td>{{ paralog.paralog_gene_name }}</td>
+                        <td>{{ paralog.paralog_gene_chromosome }}</td>
+                        <td>{{ paralog.paralog_gene_start }}</td>
+                        <td>{{ paralog.paralog_gene_end }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <section id="ortholog">
+            <div class="page-header">
+                <h2>Ortholog</h2>
+            </div>
+            <div class="con panel panel-default">
+                <table class="table table-hover table-bordered" ts-wrapper>
+                    <thead>
+                    <tr>
+                        <th>Ensembl ID</th>
+                        <th>symbol</th>
+                        <th>Orthologue</th>
+                        <th>symbol</th>
+                        <th>Target%id</th>
+                        <th>Query%id</th>
+                        <th>WGA Coverage</th>
+                        <th>High Confidence</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="ortholog in homolog" ts-repeat>
+                        <td>{{ ortholog.ensembl_gene_id }}</td>
+                        <td>{{ ortholog.external_gene_name }}</td>
+                        <td>{{ ortholog.ortholog }}</td>
+                        <td>{{ ortholog.ortholog_external_gene_name }}</td>
+                        <td>{{ ortholog.homolog_perc_id }}</td>
+                        <td>{{ ortholog.homolog_perc_id_r1 }}</td>
+                        <td>{{ ortholog.homolog_wga_coverage }}</td>
+                        <td>{{ ortholog.homolog_orthology_confidence }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </div>
 
 
