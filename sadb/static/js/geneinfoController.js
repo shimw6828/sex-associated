@@ -1,7 +1,7 @@
 angular.module('sadb')
     .controller('geneinfoController', geneinfoController);
 
-function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce){
+function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$anchorScroll, $location){
     var base_url = sadbService.getAPIBaseUrl();
     $scope.get_gene_detail = function () {
         console.log("detail work");
@@ -110,5 +110,6 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce){
 
     }
     $scope.get_gene_detail();
+    $('body').scrollspy({target:'#geneInfo_siderbar'});
 
 }

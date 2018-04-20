@@ -37,9 +37,9 @@ function HomeController($scope,$http,$window,$routeParams,sadbService) {
 
 
     $scope.filter_sra = function (query_sra) {
-        window.open(base_url+"#/sra_info?sra="+query_sra,"_self")
+        window.open(base_url+"#!/sra_info?sra="+query_sra,"_self")
     }
     $scope.filter_gene = function (query_gene) {
-        window.open(base_url+"#/gene_info?gene_id="+query_gene,"_self")
+        window.open(base_url+"#!/gene_info?gene_id="+query_gene,"_self")
     }
     }

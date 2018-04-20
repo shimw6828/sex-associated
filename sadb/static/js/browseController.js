@@ -36,7 +36,7 @@ function browseController($scope,$http,$routeParams,sadbService) {
     $scope.browsetest = function () {
         console.log("ok");
         var taxonomy = "7918";
-        window.open(base_url+"#/taxonomy?taxonomy="+taxonomy,"_self")
+        window.open(base_url+"#!/taxonomy?taxonomy="+taxonomy,"_self")
 
 
     }
