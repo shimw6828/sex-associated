@@ -110,6 +110,10 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
 
     }
     $scope.get_gene_detail();
-    $('body').scrollspy({target:'#geneInfo_siderbar'});
+    $('body').scrollspy({target:'#geneInfo_siderbar',offset:90});
+
+    $scope.goto = function (element) {
+        $('html, body').animate({scrollTop:$(element).offset().top-51},100)
+    }
 
 }

@@ -28,6 +28,7 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
                 controller: "browseController"
             });
     })
+
     .service('sadbService',function () {
         this.getBrowserBaseUrl = function () {
             return "127.0.0.1";

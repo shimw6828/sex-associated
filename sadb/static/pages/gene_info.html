@@ -2,10 +2,10 @@
         <div class="container-fluid">
 			<div class="container-fluid">
 			<ul class="nav nav-pills nav-stacked">
-				<li class="active"><a href="#basic_info" >Gene information</a></li>
-				<li><a href="#analysis">Gene analysis</a></li>
-				<li><a href="#gene_model">Gene Model</a></li>
-                <li><a href="#protein">Protein</a></li>
+				<li class="active" ng-click="goto('#basic_info')"><a ng-href="#basic_info" onclick="return false">Gene information</a></li>
+				<li ng-click="goto('#analysis')"><a ng-href="#analysis" onclick="return false">Gene analysis</a></li>
+				<li ng-click="goto('#gene_model')"><a ng-href="#gene_model" onclick="return false">Gene Model</a></li>
+                <li ng-click="goto('#protein')"><a ng-href="#protein" onclick="return false">Protein</a></li>
 
 			</ul>
 			</div>
@@ -13,7 +13,7 @@
     </nav>
 <div class="main-container">
     <div >
-        <a href="#/"><img src="/static/image/top.png" style="width: 100%;height: 100px"></a>
+        <a ng-href="#!/"><img src="/static/image/top.png" style="width: 100%;height: 100px"></a>
     </div>
 
     <div class="container">
@@ -23,13 +23,13 @@
             </div>
             <dl class="dl-horizontal">
                 <dt>Ensembl ID</dt>
-                <dd><a href="http://www.ensembl.org/{{ taxname }}/Gene/Summary?g={{ gene_id }}" target="_blank">{{ gene_id }}</a></dd>
+                <dd><a ng-href="http://www.ensembl.org/{{ taxname }}/Gene/Summary?g={{ gene_id }}" target="_blank">{{ gene_id }}</a></dd>
                 <dt ng-hide="gene_detail.entrezgene=='nan'">Gene ID</dt>
-                <dd ng-hide="gene_detail.entrezgene=='nan'"><a href="http://www.ncbi.nlm.nih.gov/gene/{{ gene_detail.entrezgene }}" target="_blank">{{ gene_detail.entrezgene }}</a></dd>
+                <dd ng-hide="gene_detail.entrezgene=='nan'"><a ng-href="http://www.ncbi.nlm.nih.gov/gene/{{ gene_detail.entrezgene }}" target="_blank">{{ gene_detail.entrezgene }}</a></dd>
                 <dt ng-hide="gene_detail.external_gene_name=='nan'">Gene Symbol</dt>
                 <dd ng-hide="gene_detail.external_gene_name=='nan'">{{ gene_detail.external_gene_name}}</dd>
-                <dt ng-hide="get_summary.synonyms==''">Alias</dt>
-                <dd ng-hide="get_summary.synonyms==''">{{ get_summary.synonyms}}</dd>
+                <dt ng-hide="get_summary.synonyms=='[]'">Alias</dt>
+                <dd ng-hide="get_summary.synonyms=='[]'">{{ get_summary.synonyms}}</dd>
                 <dt ng-hide="gene_detail.description=='nan'">Full Name</dt>
                 <dd ng-hide="gene_detail.description=='nan'">{{ gene_detail.description }}</dd>
                 <dt>Gene Type</dt>
@@ -39,7 +39,7 @@
                 <dt>Position</dt>
                 <dd>Chromosome {{ gene_detail.chromosome_name }}: {{ gene_detail.start_position }} - {{ gene_detail.end_position }}</dd>
                 <dt ng-hide="gene_detail.hgnc_id=='nan'">HGNC</dt>
-                <dd ng-hide="gene_detail.hgnc_id=='nan'"><a href="www.genenames.org/cgi-bin/gene_symbol_report?q=data/hgnc_data.php&hgnc_id={{ gene_detail.hgnc_id }}" target="_blank">{{ gene_detail.hgnc_id }}</a></dd>
+                <dd ng-hide="gene_detail.hgnc_id=='nan'"><a ng-href="www.genenames.org/cgi-bin/gene_symbol_report?q=data/hgnc_data.php&hgnc_id={{ gene_detail.hgnc_id }}" target="_blank">{{ gene_detail.hgnc_id }}</a></dd>
                 <dt ng-hide="get_summary.summary==null">Summary</dt>
                 <dd ng-hide="get_summary.summary==null">{{ get_summary.summary }}</dd>
                 <br>
@@ -63,7 +63,7 @@
                     <tbody>
                         <tr ng-repeat="tran in transcript" ts-repeat>
                             <td style="text-align: center">
-                                <a href="http://www.ensembl.org/{{ taxname }}/Transcript/Summary?db=core;t={{ tran.ensembl_transcript_id }}" target="_blank">{{ tran.ensembl_transcript_id }}</a>
+                                <a ng-href="http://www.ensembl.org/{{ taxname }}/Transcript/Summary?db=core;t={{ tran.ensembl_transcript_id }}" target="_blank">{{ tran.ensembl_transcript_id }}</a>
                             </td>
                             <td>{{ tran.transcript_start }}</td>
                             <td>{{ tran.transcript_end }}</td>
@@ -71,7 +71,7 @@
                             <td>{{ tran.ensembl_peptide_id }}</td>
                             <td>{{ tran.cds_length/3 }}</td>
                             <td>
-                                <a href="http://www.uniprot.org/uniprot/{{ tran.uniprotsptrembl }}" target="_blank">{{ tran.uniprotsptrembl }}</a>
+                                <a ng-href="http://www.uniprot.org/uniprot/{{ tran.uniprotsptrembl }}" target="_blank">{{ tran.uniprotsptrembl }}</a>
                             </td>
                         </tr>
                     </tbody>
@@ -134,10 +134,10 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="protein in proteins" ts-repeat>
-                        <td><a href="http://asia.ensembl.org/{{ taxname }}/Transcript/ProteinSummary?db=core;p={{ protein.ensembl_peptide_id }}" target="_blank">{{ protein.ensembl_peptide_id }}</a></td>
+                        <td><a ng-href="http://asia.ensembl.org/{{ taxname }}/Transcript/ProteinSummary?db=core;p={{ protein.ensembl_peptide_id }}" target="_blank">{{ protein.ensembl_peptide_id }}</a></td>
                         <td>{{ protein.pfam_start }}</td>
                         <td>{{ protein.pfam_end }}</td>
-                        <td><a href="https://pfam.xfam.org/family/{{ protein.pfam }}" target="_blank">{{ protein.pfam }}</a></td>
+                        <td><a ng-href="https://pfam.xfam.org/family/{{ protein.pfam }}" target="_blank">{{ protein.pfam }}</a></td>
                     </tr>
                     </tbody>
                 </table>
@@ -160,11 +160,11 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="drug_info in get_drug_info" ts-repeat>
-                        <td><a href="https://www.drugbank.ca/drugs/{{ drug_info.DrugBank_ID }}">{{ drug_info.DrugBank_ID }}</a></td>
+                        <td><a ng-href="https://www.drugbank.ca/drugs/{{ drug_info.DrugBank_ID }}">{{ drug_info.DrugBank_ID }}</a></td>
                         <td>{{ drug_info.Drug_name }}</td>
                         <td>{{ drug_info.Type }}</td>
                         <td>{{ drug_info.UniProt_Name }}</td>
-                        <td><a href="http://www.uniprot.org/uniprot/{{ drug_info["UniProt ID"] }}">{{ drug_info["UniProt ID"] }}</a></td>
+                        <td><a ng-href="http://www.uniprot.org/uniprot/{{ drug_info["UniProt ID"] }}">{{ drug_info["UniProt ID"] }}</a></td>
                     </tr>
                     </tbody>
                 </table>
@@ -186,7 +186,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="go_term in go_terms" ts-repeat>
-                        <td><a href="http://amigo.geneontology.org/amigo/term/{{ go_term.go_id }}">{{ go_term.go_id }}</a></td>
+                        <td><a ng-href="http://amigo.geneontology.org/amigo/term/{{ go_term.go_id }}">{{ go_term.go_id }}</a></td>
                         <td>{{ go_term.name_1006 }}</td>
                         <td>{{ go_term.namespace_1003 }}</td>
                         <td>{{ go_term.go_linkage_type }}</td>
@@ -210,7 +210,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="phenotype in phenotypes" ts-repeat>
-                        <td><a href="http://amigo.geneontology.org/amigo/term/{{ phenotype.study_external_id }}">{{ phenotype.phenotype_description }}</a></td>
+                        <td><a ng-href="http://amigo.geneontology.org/amigo/term/{{ phenotype.study_external_id }}">{{ phenotype.phenotype_description }}</a></td>
                         <td>{{ phenotype.study_external_id }}</td>
                         <td>{{ phenotype.source_name }}</td>
                     </tr>
@@ -239,7 +239,7 @@
                     <tr ng-repeat="paralog in paralogue" ts-repeat>
                         <td>{{ paralog.ensembl_gene_id }}</td>
                         <td>{{ paralog.external_gene_name }}</td>
-                        <td><a href="#/gene_info?gene={{ paralog.paralog_ensembl_gene }}" target="_blank">{{ paralog.paralog_ensembl_gene }}</a></td>
+                        <td><a ng-href="#/gene_info?gene={{ paralog.paralog_ensembl_gene }}" target="_blank">{{ paralog.paralog_ensembl_gene }}</a></td>
                         <td>{{ paralog.paralog_gene_name }}</td>
                         <td>{{ paralog.paralog_gene_chromosome }}</td>
                         <td>{{ paralog.paralog_gene_start }}</td>
