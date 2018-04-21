@@ -5,6 +5,13 @@
 				<li class="active" ng-click="goto('#basic_info')"><a ng-href="#basic_info" onclick="return false">Gene information</a></li>
 				<li ng-click="goto('#analysis')"><a ng-href="#analysis" onclick="return false">Gene analysis</a></li>
 				<li ng-click="goto('#gene_model')"><a ng-href="#gene_model" onclick="return false">Gene Model</a></li>
+                <li ng-click="goto('#drug_info')" ng-hide="get_drug_info.length==0"><a ng-href="#drug_info" onclick="return false">Drug Target</a></li>
+                <li ng-click="goto('#gene_ontology')" ng-show="go_terms.length>0"><a ng-href="#gene_ontology" onclick="return false">Gene Ontology</a></li>
+                <li ng-click="goto('#phenotype')" ng-hide="phenotypes.length==0"><a ng-href="#phenotype" onclick="return false">Phenotype</a></li>
+                <li ng-click="goto('#paralog')" ng-hide="paralogue==0"><a ng-href="#paralog" onclick="return false">Paralog</a></li>
+                <li ng-click="goto('#ortholog')"><a ng-href="#ortholog" onclick="return false">Ortholog</a></li>
+                <li ng-click="goto('#protein')"><a ng-href="#protein" onclick="return false">Protein</a></li>
+                <li ng-click="goto('#protein')"><a ng-href="#protein" onclick="return false">Protein</a></li>
                 <li ng-click="goto('#protein')"><a ng-href="#protein" onclick="return false">Protein</a></li>
 
 			</ul>
