@@ -1,6 +1,9 @@
-    <nav class="col-md-1" id="geneInfo_siderbar" style="position: fixed">
-        <div class="container-fluid">
-			<div class="container-fluid">
+    <div >
+        <a ng-href="#!/"><img src="/static/image/top.png" style="width: 100%;height: 100px"></a>
+    </div>
+<div class="main-container row">
+
+        <nav class="geneInfo_siderbar" id="geneInfo_siderbar">
 			<ul class="nav nav-pills nav-stacked">
 				<li class="active" ng-click="goto('#basic_info')"><a ng-href="#basic_info" onclick="return false">Gene information</a></li>
 				<li ng-click="goto('#analysis')"><a ng-href="#analysis" onclick="return false">Gene analysis</a></li>
@@ -10,20 +13,11 @@
                 <li ng-click="goto('#phenotype')" ng-hide="phenotypes.length==0"><a ng-href="#phenotype" onclick="return false">Phenotype</a></li>
                 <li ng-click="goto('#paralog')" ng-hide="paralogue==0"><a ng-href="#paralog" onclick="return false">Paralog</a></li>
                 <li ng-click="goto('#ortholog')"><a ng-href="#ortholog" onclick="return false">Ortholog</a></li>
-                <li ng-click="goto('#protein')"><a ng-href="#protein" onclick="return false">Protein</a></li>
-                <li ng-click="goto('#protein')"><a ng-href="#protein" onclick="return false">Protein</a></li>
-                <li ng-click="goto('#protein')"><a ng-href="#protein" onclick="return false">Protein</a></li>
 
 			</ul>
-			</div>
-        </div>
     </nav>
-<div class="main-container">
-    <div >
-        <a ng-href="#!/"><img src="/static/image/top.png" style="width: 100%;height: 100px"></a>
-    </div>
 
-    <div class="container">
+    <div class="col-md-10 " style="background-color: white;margin-left: 140px">
         <section id="basic_info">
             <div class="page-header">
                 <h2>Gene information</h2>
@@ -275,10 +269,11 @@
                     </tr>
                     </thead>
                     <tbody>
+
                     <tr ng-repeat="ortholog in homolog" ts-repeat>
                         <td>{{ ortholog.ensembl_gene_id }}</td>
                         <td>{{ ortholog.external_gene_name }}</td>
-                        <td>{{ ortholog.ortholog }}</td>
+                        <td><a ng-href="#/gene_info?gene={{ ortholog.ortholog }}" target="_blank">{{ ortholog.ortholog }}</a></td>
                         <td>{{ ortholog.ortholog_external_gene_name }}</td>
                         <td>{{ ortholog.homolog_perc_id }}</td>
                         <td>{{ ortholog.homolog_perc_id_r1 }}</td>

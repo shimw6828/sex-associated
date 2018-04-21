@@ -96,6 +96,14 @@ td{
 th{
     text-align: center;
 }
-/*section{*/
-    /*padding-top: 61px;*/
-/*}*/
+.geneInfo_siderbar{
+    position: fixed;
+    margin-top: 100px;
+    background-color: white;
+    border-radius:7px;
+}
+
+.bg{
+    margin-top: 51px;
+    background-color: #ddd;
+}
