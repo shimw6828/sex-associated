@@ -297,8 +297,7 @@ get_homolog_fields={
     "homolog_wga_coverage": fields.String,
     "ortholog_external_gene_name": fields.String,
     "external_gene_name": fields.String,
-    "homolog_orthology_confidence": fields.String,
-    "ensembl_gene_id": fields.String
+    "homolog_orthology_confidence": fields.String
 }
 class get_homolog(Resource):
     @marshal_with(get_homolog_fields)
@@ -308,8 +307,8 @@ class get_homolog(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-        homolog=list(mongo.db.homolog.find(condition))
-        return homolog
+        homolog=mongo.db.homolog.find_one(condition)
+        return homolog['homologs']
 api.add_resource(get_homolog,'/api/get_homolog')
 
 
@@ -319,8 +318,8 @@ get_paralogue_fields={
     'paralog_gene_chromosome':fields.String,
     'paralog_gene_start':fields.Integer,
     'paralog_gene_end':fields.Integer,
-    "ensembl_gene_id": fields.String,
     'external_gene_name': fields.String,
+    'ensembl_gene_id':fields.String
 }
 class get_paralogue(Resource):
     @marshal_with(get_paralogue_fields)
@@ -330,7 +329,8 @@ class get_paralogue(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-        result=list(mongo.db.paralogue.find(condition))
+
+        result = mongo.db.paralogue.find_one(condition)["paralog_ensembl_gene"]
         paralogue=[]
         for i in result:
             k={}
@@ -340,8 +340,8 @@ class get_paralogue(Resource):
             k["paralog_gene_chromosome"]=paralog_gene['chromosome_name']
             k["paralog_gene_start"]=paralog_gene['start_position']
             k["paralog_gene_end"] = paralog_gene['end_position']
-            k["ensembl_gene_id"]=i["ensembl_gene_id"]
-            k["external_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :k["ensembl_gene_id"]},{"external_gene_name":1})["external_gene_name"]
+            k["ensembl_gene_id"]=condition["ensembl_gene_id"]
+            k["external_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :condition["ensembl_gene_id"]},{"external_gene_name":1})["external_gene_name"]
             paralogue.append(k)
         return paralogue
 api.add_resource(get_paralogue,'/api/get_paralogue')
@@ -383,7 +383,8 @@ get_result_fields={
 }
 get_analysis_fields={
     'analysis': fields.List(fields.Nested(get_result_fields)),
-    'taxname': fields.String
+    'taxname': fields.String,
+    'taxon_id':fields.Integer
 }
 
 class get_analysis(Resource):
@@ -396,7 +397,7 @@ class get_analysis(Resource):
         condition["gene_ID"] = args['gene']
         analysis=list(mongo.db.total_result.find(condition))
         taxname=analysis[0]["Scientific_name"].replace(" ","_").encode()
-        return {"analysis":analysis,"taxname":taxname}
+        return {"analysis":analysis,"taxname":taxname,"taxon_id":analysis[0]["Taxon_id"]}
 api.add_resource(get_analysis,'/api/analysis')
 
 get_phenotypes_fields={

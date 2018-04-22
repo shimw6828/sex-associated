@@ -102,7 +102,6 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
         }).then(
             function (response) {
                 $scope.homolog = response.data
-                console.log($scope.homolog)
             }
         )
 
