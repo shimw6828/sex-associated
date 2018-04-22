@@ -107,30 +107,28 @@ def import_pathway():
         os.remove("opt/shimw/gene_pathway.csv")
         print("pathway put in")
 
-def import_paralogue():
+def import_paralogue(Taxon_id):
     paralogues=pd.read_csv("/opt/shimw/gene_paralogue.csv")
-    for i in paralogues.index:
-        paralogue=paralogues.loc[i]
-        record = {'ensembl_gene_id': paralogue['ensembl_gene_id'],
-                  'paralog_ensembl_gene': paralogue['paralog_ensembl_gene']
+    paralogues_g=paralogues.groupby('ensembl_gene_id')
+    for i in paralogues_g.groups:
+        paralogue=list(paralogues.loc[paralogues_g.groups[i].values]['paralog_ensembl_gene'])
+        if pd.isnull(list(paralogues.loc[paralogues_g.groups[i].values]['paralog_ensembl_gene'])[0]):
+            continue
+        paralog=get_paralog(paralogue)
+        record = {'ensembl_gene_id': i,
+                  'paralog_ensembl_gene': paralog
                   }
         db.paralogue.insert_one(record)
     os.remove("/opt/shimw/gene_paralogue.csv")
     print("paralogue put in")
 
-def import_homolog():
+def import_homolog(Taxon_id):
     homologs=pd.read_csv("/opt/shimw/gene_homolog.csv")
-    for i in homologs.index:
-        homolog=homologs.loc[i]
-        record = {'ensembl_gene_id': homolog['ensembl_gene_id'],
-                  'external_gene_name': homolog['external_gene_name'],
-                  'ortholog': homolog['ortholog'],
-                  'ortholog_external_gene_name': homolog['ortholog_external_gene_name'],
-                  'homolog_perc_id': homolog['homolog_perc_id'],
-                  'homolog_perc_id_r1': homolog['homolog_perc_id_r1'],
-                  'homolog_wga_coverage': homolog['homolog_wga_coverage'],
-                  'homolog_orthology_confidence': homolog['homolog_orthology_confidence']
-                  }
+    homologs_g=homologs.groupby('ensembl_gene_id')
+    for i in homologs_g.groups:
+        homolog=homologs.loc[homologs_g.groups[i].values]
+        homo=get_homolog(homolog)
+        record={'ensembl_gene_id':i,'homologs':homo}
         db.homolog.insert_one(record)
     os.remove("/opt/shimw/gene_homolog.csv")
     print("homolog put in")
@@ -145,7 +143,17 @@ def get_exon(df):
               'exon_chrom_end':df.ix[j]["exon_chrom_end"]}
         exons.append(exon)
     return exons
+def get_paralog(list):
+    paralog=[]
+    for i in list:
+        paralog.append({'paralog_ensembl_gene':i})
+    return paralog
 
+def get_homolog(df):
+    homologs=[]
+    for j in df.index:
+        homologs.append(dict(df.ix[j]))
+    return homologs
 
 if __name__ =="__main__":
     parser = argparse.ArgumentParser()
@@ -158,8 +166,8 @@ if __name__ =="__main__":
     import_go_terms()
     import_gene_phenotype()
     import_pathway()
-    import_paralogue()
-    import_homolog()
+    import_paralogue(Taxon_id)
+    import_homolog(Taxon_id)
 
 
 
