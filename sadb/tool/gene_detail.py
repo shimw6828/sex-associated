@@ -31,59 +31,54 @@ def import_gene_info(Taxon_id):
 def import_gene_structures():
     Transcripts=pd.read_csv("/opt/shimw/gene_structures.csv")
     exons=pd.read_csv("/opt/shimw/Transcript_exon.csv")
-    for Transcript in Transcripts['ensembl_transcript_id']:
-        structures=Transcripts.loc[Transcripts['ensembl_transcript_id']==Transcript]
-        record = {'ensembl_gene_id': structures['ensembl_gene_id'].values[0],
-                  'ensembl_transcript_id': structures['ensembl_transcript_id'].values[0],
-                  'start_position': structures['start_position'].values[0],
-                  'end_position': structures['end_position'].values[0],
-                  'transcript_length': structures['transcript_length'].values[0],
-                  'ensembl_peptide_id': structures['ensembl_peptide_id'].values[0],
-                  'transcript_start': structures['transcript_start'].values[0],
-                  'transcript_end': structures['transcript_end'].values[0],
-                  'cds_length': structures['cds_length'].values[0],
-                  'uniprotsptrembl': structures['uniprotsptrembl'].values[0],
-                  'transcript_biotype': structures['transcript_biotype'].values[0],
-                  'exons': []
-                  }
-        list_exons = get_exon(exons.loc[exons['ensembl_transcript_id']==structures["ensembl_transcript_id"].values[0]])
-        record['exons'] = list_exons
-        db.gene_structures.insert_one(record)
+    for ensembl_gene_id in Transcripts['ensembl_gene_id'].drop_duplicates():
+        structures=Transcripts.loc[Transcripts['ensembl_gene_id']==ensembl_gene_id]
+        records=[]
+        for Transcript in structures.index:
+            record = dict(structures.ix[Transcript])
+            del record['ensembl_gene_id']
+            record['exons'] = get_exon(exons.loc[exons['ensembl_transcript_id']==record["ensembl_transcript_id"]])
+            records.append(record)
+        result={"ensembl_gene_id":ensembl_gene_id,"Transcripts":records}
+        db.gene_structures.insert_one(result)
+
     os.remove("/opt/shimw/gene_structures.csv")
     os.remove("/opt/shimw/Transcript_exon.csv")
     print("structures put in")
 
 def import_Proteins():
     Proteins=pd.read_csv("/opt/shimw/gene_Protein.csv")
-    for i in Proteins.index:
-        protein_info=Proteins.loc[i]
-        record={'ensembl_gene_id':protein_info['ensembl_gene_id'],
-                'ensembl_peptide_id':protein_info['ensembl_peptide_id'],
-                'pfam':protein_info['pfam'],
-                'pfam_start':protein_info['pfam_start'],
-                'pfam_end':protein_info['pfam_end']
-                }
-        db.proteins.insert_one(record)
+    for ensembl_gene_id in Proteins['ensembl_gene_id'].drop_duplicates():
+        proteins=Proteins.loc[Proteins['ensembl_gene_id']==ensembl_gene_id]
+        records=[]
+        for i in proteins.index:
+            protein = dict(proteins.ix[i])
+            del protein["ensembl_gene_id"]
+            records.append(protein)
+        result = {"ensembl_gene_id": ensembl_gene_id, "Proteins": records}
+        db.proteins.insert_one(result)
     os.remove("/opt/shimw/gene_Protein.csv")
     print("Protein put in")
 
 def import_go_terms():
     go_terms=pd.read_csv("/opt/shimw/go_term.csv")
-    for i in go_terms.index:
-        go_term=go_terms.loc[i]
-        record={'ensembl_gene_id':go_term['ensembl_gene_id'],
-                'go_id':go_term['go_id'],
-                'name_1006':go_term['name_1006'],
-                'go_linkage_type':go_term['go_linkage_type'],
-                'namespace_1003':go_term['namespace_1003']
-                }
-        db.go_terms.insert_one(record)
+    go_terms=go_terms.dropna(subset=["go_id"])
+    for ensembl_gene_id in go_terms['ensembl_gene_id'].drop_duplicates():
+        go_term=go_terms.loc[go_terms['ensembl_gene_id']==ensembl_gene_id]
+        records = []
+        for i in go_term.index:
+            record=dict(go_term.ix[i])
+            del record["ensembl_gene_id"]
+            records.append(record)
+        result={"ensembl_gene_id":ensembl_gene_id,"go_terms":records}
+        db.go_terms.insert_one(records)
     os.remove("/opt/shimw/go_term.csv")
     print("go_term put in")
 
 def import_gene_phenotype():
     if os.path.exists("/opt/shimw/gene_phenotype.csv"):
         gene_phenotypes=pd.read_csv("/opt/shimw/gene_phenotype.csv")
+        gene_phenotypes=gene_phenotypes.dropna(subset=["phenotype_description"])
         for i in gene_phenotypes.index:
             gene_phenotype = gene_phenotypes.loc[i]
             record = {'ensembl_gene_id': gene_phenotype['ensembl_gene_id'],
@@ -98,14 +93,12 @@ def import_gene_phenotype():
 def import_pathway():
     if os.path.exists("/opt/shimw/gene_pathway.csv"):
         gene_pathways=pd.read_csv("/opt/shimw/gene_pathway.csv")
+        gene_pathways=gene_pathways.dropna(subset=["kegg_enzyme"])
         for i in gene_pathways.index:
-            gene_pathway = gene_pathways.loc[i]
-            record = {'ensembl_gene_id': gene_pathway['ensembl_gene_id'],
-                      'kegg_enzyme': gene_pathway['kegg_enzyme']
-                      }
+            record =dict(gene_pathways.ix[i])
             db.pathway.insert_one(record)
-        os.remove("opt/shimw/gene_pathway.csv")
-        print("pathway put in")
+    os.remove("opt/shimw/gene_pathway.csv")
+    print("pathway put in")
 
 def import_paralogue(Taxon_id):
     paralogues=pd.read_csv("/opt/shimw/gene_paralogue.csv")
@@ -138,9 +131,8 @@ def import_homolog(Taxon_id):
 def get_exon(df):
     exons=[]
     for j in df.index:
-        exon={'ensembl_exon_id':df.ix[j]["ensembl_exon_id"],
-             'exon_chrom_start':df.ix[j]["exon_chrom_start"],
-              'exon_chrom_end':df.ix[j]["exon_chrom_end"]}
+        exon=dict(df.ix[j])
+        del exon['ensembl_transcript_id']
         exons.append(exon)
     return exons
 def get_paralog(list):
@@ -152,7 +144,9 @@ def get_paralog(list):
 def get_homolog(df):
     homologs=[]
     for j in df.index:
-        homologs.append(dict(df.ix[j]))
+        homo=dict(df.ix[j])
+        del homo['ensembl_gene_id']
+        homologs.append(homo)
     return homologs
 
 if __name__ =="__main__":
