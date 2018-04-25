@@ -8,23 +8,31 @@ db.authenticate('sadb_admin','123456789',mechanism='SCRAM-SHA-1')
 
 
 def import_gene_info(inputfile, Taxon_id):
-    SRA = inputfile.split("/")[-1].split(".")[0]
+    basename = inputfile.split("/")[-1].split(".")[0].split("_")
+    SRP=basename[0]
+    SRX_T=basename[1]
+    SRX_O = basename[2]
     tax_list = pd.read_csv("/home/zhangna/SAdatabase/result/ensembl/Species_whole.csv",index_col="Taxon ID",dtype={'index':np.int})
     if Taxon_id not in tax_list.index:
         print "Wrong scientific name, the input not exit in the Species_whole.csv"
+        os._exit(0)
     if db.gene_detail.find_one({"Taxonomy_Id":Taxon_id})==None:
         print("gene detail not in our db")
+    Scientific_name=tax_list.loc[Taxon_id,'Scientific name']
+    Common_name=tax_list.loc[Taxon_id, 'Common name']
     with open(inputfile) as reader:
         header=reader.readline().strip().split(',')
         for line in reader:
             fields = line.rstrip("\n").split(",")
             record = dict(zip(header,fields))
             for k in record:
-                if k in ["baseMean","log2FoldChange","lfcSE","stat","pvalue","padj"]:
+                if k in ["baseMean","log2FoldChange","lfcSE","stat","pvalue","padj","FPKM_SRX_T","FPKM_SRX_O"]:
                     record[k] = float(record[k])
-            record["SRA_ID"]=SRA
-            record["Scientific_name"] = tax_list.loc[Taxon_id,'Scientific name']
-            record["Common_name"] = tax_list.loc[Taxon_id,'Common name']
+            record["SRP_ID"]=SRP
+            record["SRX_T"]=SRX_T
+            record["SRX_O"] = SRX_O
+            record["Scientific_name"] = Scientific_name
+            record["Common_name"] = Common_name
             record["Taxon_id"] = Taxon_id
             gene_detial=db.gene_detail.find_one({"ensembl_gene_id":record["gene_ID"]})
             record["external_gene_name"]=gene_detial["external_gene_name"]
