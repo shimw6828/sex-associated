@@ -1,0 +1,85 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-7" style="padding:0">
+            <div paging
+                 page="currentPage"
+                 page-size=20
+                 total="gene_list_count"
+                 scroll-top="true"
+                 hide-if-empty="true"
+                 show-prev-next="true"
+                 show-first-last="true"
+                 text-title-page="Page {page} Hover Over"
+                 text-title-first="First hover"
+                 text-title-last="Last hover"
+                 text-title-next="Next hover"
+                 text-title-prev="Prev hover"
+                 show-prev-next="true"
+                 show-first-last="true"
+                 ul-class="pagination"
+                 active-class="active"
+                 disabled-class="disabled"
+                 paging-action="update_gene('test',page,page-size)"
+            >
+            </div>
+        </div>
+        <form class="form-inline" style="transform: translateY(90%)" ng-show="gene_list_count >= 15">
+            padj:
+            <input type="number" id="min" style="width: 40px"  >
+            ~
+            <input type="number" id="max" style="width: 40px"  >
+        </form>
+
+    </div>
+    <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1">
+        <thead>
+        <tr>
+            <th style="text-align: center" ts-criteria="gene_id">Gene ID</th>
+            <th style="text-align: center" ts-criteria="symbol">symbol</th>
+            <th style="text-align: center" ts-criteria="baseMean|parseFloat">baseMean</th>
+            <th style="text-align: center" ts-criteria="SRA ID">SRA ID</th>
+            <th style="text-align: center" ts-criteria="Chromosome">Chromosome</th>
+            <th style="text-align: center" ts-criteria="log2FoldChange|parseFloat">log2FoldChange</th>
+            <th style="text-align: center" ts-criteria="padj|parseFloat" >padj</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="gene in gene_list" ts-repeat>
+                 <td>
+                    <a href="#!/gene_info?gene={{ gene.gene_ID }}" target="_self" ng-click="gene_detail()">
+                        {{ gene.gene_ID }}
+                    </a>
+                </td>
+                <td style="text-align: center">{{ gene.external_gene_name }}</td>
+                <td style="text-align: center">{{ gene.baseMean }}</td>
+                <td style="text-align: center">{{ gene.SRA_ID }}</td>
+                <td style="text-align: center">{{ gene.chromosome_name }}</td>
+                <td style="text-align: center">{{ gene.log2FoldChange }}</td>
+                <td style="text-align: center">{{ gene.padj }}</td>
+            </tr>
+
+
+        </tbody>
+    </table>
+    <div paging
+         page="currentPage"
+         page-size=20
+         total="gene_list_count"
+         scroll-top="true"
+         hide-if-empty="true"
+         show-prev-next="true"
+         show-first-last="true"
+         text-title-page="Page {page} Hover Over"
+         text-title-first="First hover"
+         text-title-last="Last hover"
+         text-title-next="Next hover"
+         text-title-prev="Prev hover"
+         show-prev-next="true"
+         show-first-last="true"
+         ul-class="pagination"
+         active-class="active"
+         disabled-class="disabled"
+         paging-action="update_gene('default',page,page-size)"
+    >
+    </div>
+</div>
