@@ -71,7 +71,7 @@ def import_go_terms():
             del record["ensembl_gene_id"]
             records.append(record)
         result={"ensembl_gene_id":ensembl_gene_id,"go_terms":records}
-        db.go_terms.insert_one(records)
+        db.go_terms.insert_one(result)
     os.remove("/opt/shimw/go_term.csv")
     print("go_term put in")
 
@@ -97,7 +97,7 @@ def import_pathway():
         for i in gene_pathways.index:
             record =dict(gene_pathways.ix[i])
             db.pathway.insert_one(record)
-    os.remove("opt/shimw/gene_pathway.csv")
+    os.remove("/opt/shimw/gene_pathway.csv")
     print("pathway put in")
 
 def import_paralogue(Taxon_id):
@@ -125,7 +125,6 @@ def import_homolog(Taxon_id):
         db.homolog.insert_one(record)
     os.remove("/opt/shimw/gene_homolog.csv")
     print("homolog put in")
-
 
 
 def get_exon(df):
