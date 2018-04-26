@@ -29,8 +29,8 @@ Transcript =c('ensembl_gene_id',
               'transcript_start',
               'transcript_end',
               'cds_length',
-              'uniprotsptrembl',
               'transcript_biotype')
+uniprot=c("ensembl_peptide_id",'uniprotsptrembl')
 exon = c('ensembl_transcript_id',
          'ensembl_exon_id',
          'exon_chrom_start',
@@ -61,6 +61,8 @@ paralogue=c('ensembl_gene_id',paste(tolower(substring(strsplit(science_name," ")
 gene_detail=getBM(attributes=Attributes,mart = ensembl)
 print("detail")
 gene_structures=getBM(attributes=Transcript,mart = ensembl)
+uni_id=getBM(attributes=uniprot,mart = ensembl)
+gene_structures=data.frame(gene_structures,"uniprotsptrembl"=uni_id$uniprotsptrembl[match(gene_structures$ensembl_peptide_id,uni_id$ensembl_peptide_id)])
 print("structures")
 Transcript_exon=getBM(attributes=exon,mart = ensembl)
 print("exon")
