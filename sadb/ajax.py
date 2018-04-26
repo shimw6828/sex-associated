@@ -7,41 +7,62 @@ from flask_restful import Resource, fields, marshal_with, reqparse, marshal
 #coding=utf-8
 
 
-test_fields = {
-    'gene_id': fields.String,
-    'pvalue': fields.Float,
-    'log2FoldChange': fields.Float,
-    'lfcSE':fields.Float,
-    'padj':fields.Float,
+gene_list_fields={
+    'gene_ID':fields.String,
+    'external_gene_name':fields.String,
     'baseMean':fields.Float,
-    'stat':fields.Float
+    'SRP':fields.String,
+    'SRX_T':fields.String,
+    'SRX_O':fields.String,
+    'FPKM_SRX_T':fields.Float,
+    'FPKM_SRX_O':fields.Float,
+    'chromosome_name':fields.String,
+    'log2FoldChange':fields.Float,
+    'padj':fields.Float,
+    'Scientific_name':fields.String
 }
-testdb_fields = {
-    'gene_list':fields.List(fields.Nested(test_fields)),
+
+taxonomy_fields={
+    'gene_list': fields.List(fields.Nested(gene_list_fields)),
     'gene_list_count': fields.Integer
 }
-class test(Resource):
-    @marshal_with(testdb_fields)
+class search(Resource):
+    @marshal_with(taxonomy_fields)
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('page',type=int,default=1)
-        parser.add_argument('per_page', type=int, default=15)
-        parser.add_argument('gene_id',type=str)
-        parser.add_argument('pvalue',type=float)
+        parser.add_argument('per_page', type=int, default=20)
+        parser.add_argument('filter', type=str)
+        parser.add_argument('min', type=str)
+        parser.add_argument('max', type=str)
         args = parser.parse_args()
         page = args['page']
         per_page = args['per_page']
         record_skip = (page - 1) * per_page
         condition = {}
-        if args['gene_id']:
-            condition['gene_id'] = args['gene_id']
-        if args['pvalue']:
-            condition['pvalue'] = {"$gte":args['pvalue']}
-        gene_list=list(mongo.db.SRP062329.find(condition).skip(record_skip).limit(per_page))
-        gene_list_count = mongo.db.SRP062329.find(condition).count()
+        condition["padj"]={"$gte":0,"$lte":1}
+        if args['query']:
+            condition["$or"]=[{"gene_ID":{"$regex": args["query"],"$options": "$i"}},
+                              {"external_gene_name":{"$regex": args["query"],"$options": "$i"}},
+                              {"chromosome_name":{"$regex": args["query"],"$options": "$i"}}]
+        if args['min'] :
+            condition["padj"]["$gte"]= float(args['min'])
+        if args['max']:
+            condition["padj"]["$lte"] = float(args['max'])
+
+
+        results = list(mongo.db.total_result.find(condition).sort([("padj",-1)]).skip(record_skip).limit(per_page))
+
+        gene_list_count = mongo.db.total_result.find(condition).count()
+        gene_list = []
+
+        for result in results:
+            if type(result["external_gene_name"])==float:
+                result["external_gene_name"]=""
+            gene_list.append(result)
         return {"gene_list":gene_list,"gene_list_count":gene_list_count}
 
-api.add_resource(test, '/api/test')
+api.add_resource(search, '/api/search')
 
 commne_name_fields={
     'Taxonomy_Id':fields.Integer,
@@ -60,21 +81,7 @@ class get_common_name(Resource):
 
 api.add_resource(get_common_name,'/api/get_common_name')
 
-gene_list_fields={
-    'gene_ID':fields.String,
-    'external_gene_name':fields.String,
-    'baseMean':fields.Float,
-    'SRA_ID':fields.String,
-    'chromosome_name':fields.String,
-    'log2FoldChange':fields.Float,
-    'padj':fields.Float,
-    'Scientific_name':fields.String
-}
 
-taxonomy_fields={
-    'gene_list': fields.List(fields.Nested(gene_list_fields)),
-    'gene_list_count': fields.Integer
-}
 
 class get_taxonomy_list(Resource):
     @marshal_with(taxonomy_fields)
@@ -218,12 +225,12 @@ class get_gene_structures(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-        structures=list(mongo.db.gene_structures.find(condition))
-        gene_start=structures[0]["start_position"]
-        gene_end=structures[0]["end_position"]
+        structures=mongo.db.gene_structures.find_one(condition)
+        gene_start=structures["Transcripts"][0]["start_position"]
+        gene_end=structures["Transcripts"][0]["end_position"]
         gene_length=gene_end-gene_start
         transcription = []
-        for transcript in structures:
+        for transcript in structures["Transcripts"]:
             transcription.append({"exon":transcript["exons"],"ensembl_transcript_id":transcript["ensembl_transcript_id"]})
         gap = gene_length / 10
         svgs = ''
@@ -285,8 +292,8 @@ class get_go_terms(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-        go_terms=list(mongo.db.go_terms.find(condition))
-        return go_terms
+        go_terms=mongo.db.go_terms.find_one(condition)
+        return go_terms["go_terms"]
 api.add_resource(get_go_terms,'/api/get_go_terms')
 
 
@@ -360,8 +367,8 @@ class get_proteins(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-        proteins=list(mongo.db.proteins.find(condition))
-        return proteins
+        proteins=mongo.db.proteins.find_one(condition)
+        return proteins["Proteins"]
 api.add_resource(get_proteins,'/api/get_proteins')
 
 
