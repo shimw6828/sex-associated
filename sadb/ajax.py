@@ -1,10 +1,18 @@
+#coding=utf-8
 import flask_restful
 import string
 import json
 from sadb import app, api
 from sadb.core import mongo
 from flask_restful import Resource, fields, marshal_with, reqparse, marshal
-#coding=utf-8
+import pandas as pd
+import math
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+
 
 
 gene_list_fields={
@@ -145,10 +153,6 @@ class get_detail(Resource):
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
         detail=mongo.db.gene_detail.find_one(condition)
-        if str(detail["entrezgene"])=="nan":
-            detail["entrezgene"]=str(detail["entrezgene"])
-        else:
-            detail["entrezgene"]=int(detail["entrezgene"])
         return detail
 api.add_resource(get_detail,'/api/get_detail')
 
@@ -273,7 +277,7 @@ class get_gene_structures(Resource):
             text = '<text x="810" y="50%" dy=".3em" fill="black" font-size="12">' + i["ensembl_transcript_id"] + '</text>\n'
             svg = svg + polylines + rects + text + '</svg>\n'
             svgs = svgs + svg
-        gene_structures={"transcript": structures, "gene_model": svgs}
+        gene_structures={"transcript": structures["Transcripts"], "gene_model": svgs}
         return gene_structures
 api.add_resource(get_gene_structures,'/api/get_gene_structures')
 
@@ -293,7 +297,8 @@ class get_go_terms(Resource):
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
         go_terms=mongo.db.go_terms.find_one(condition)
-        return go_terms["go_terms"]
+        if go_terms:
+            return go_terms["go_terms"]
 api.add_resource(get_go_terms,'/api/get_go_terms')
 
 
@@ -315,7 +320,9 @@ class get_homolog(Resource):
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
         homolog=mongo.db.homolog.find_one(condition)
-        return homolog['homologs']
+        if homolog:
+            return homolog['homologs']
+
 api.add_resource(get_homolog,'/api/get_homolog')
 
 
@@ -337,20 +344,21 @@ class get_paralogue(Resource):
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
 
-        result = mongo.db.paralogue.find_one(condition)["paralog_ensembl_gene"]
-        paralogue=[]
-        for i in result:
-            k={}
-            k["paralog_ensembl_gene"]=i["paralog_ensembl_gene"]
-            paralog_gene=mongo.db.gene_detail.find_one({"ensembl_gene_id": k["paralog_ensembl_gene"]})
-            k["paralog_gene_name"]=paralog_gene["external_gene_name"]
-            k["paralog_gene_chromosome"]=paralog_gene['chromosome_name']
-            k["paralog_gene_start"]=paralog_gene['start_position']
-            k["paralog_gene_end"] = paralog_gene['end_position']
-            k["ensembl_gene_id"]=condition["ensembl_gene_id"]
-            k["external_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :condition["ensembl_gene_id"]},{"external_gene_name":1})["external_gene_name"]
-            paralogue.append(k)
-        return paralogue
+        result = mongo.db.paralogue.find_one(condition)
+        if result:
+            paralogue=[]
+            for i in result:
+                k={}
+                k["paralog_ensembl_gene"]=i["paralog_ensembl_gene"]
+                paralog_gene=mongo.db.gene_detail.find_one({"ensembl_gene_id": k["paralog_ensembl_gene"]})
+                k["paralog_gene_name"]=paralog_gene["external_gene_name"]
+                k["paralog_gene_chromosome"]=paralog_gene['chromosome_name']
+                k["paralog_gene_start"]=paralog_gene['start_position']
+                k["paralog_gene_end"] = paralog_gene['end_position']
+                k["ensembl_gene_id"]=condition["ensembl_gene_id"]
+                k["external_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :condition["ensembl_gene_id"]},{"external_gene_name":1})["external_gene_name"]
+                paralogue.append(k)
+            return paralogue
 api.add_resource(get_paralogue,'/api/get_paralogue')
 
 get_proteins_fields={
@@ -368,7 +376,8 @@ class get_proteins(Resource):
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
         proteins=mongo.db.proteins.find_one(condition)
-        return proteins["Proteins"]
+        if proteins:
+            return proteins["Proteins"]
 api.add_resource(get_proteins,'/api/get_proteins')
 
 
@@ -386,12 +395,12 @@ get_result_fields={
     "Common_name": fields.String,
     "chromosome_name": fields.String,
     "pvalue": fields.Float,
-    "SRA_ID": fields.String
+    "SRA_ID": fields.String,
+    "group": fields.String
 }
 get_analysis_fields={
     'analysis': fields.List(fields.Nested(get_result_fields)),
-    'taxname': fields.String,
-    'taxon_id':fields.Integer
+    'taxname': fields.String
 }
 
 class get_analysis(Resource):
@@ -403,8 +412,37 @@ class get_analysis(Resource):
         condition = {}
         condition["gene_ID"] = args['gene']
         analysis=list(mongo.db.total_result.find(condition))
-        taxname=analysis[0]["Scientific_name"].replace(" ","_").encode()
-        return {"analysis":analysis,"taxname":taxname,"taxon_id":analysis[0]["Taxon_id"]}
+
+        if analysis:
+            x = []
+            y = [1 for i in range(len(analysis))]
+            log2foldchange = []
+            padj = []
+            for i in range(0,len(analysis)):
+                analysis[i]["group"]=chr(ord('A')+i)
+                x.append(chr(ord('A')+i))
+                if analysis[i]["log2FoldChange"] > 10:
+                    log2foldchange.append(10)
+                elif analysis[i]["log2FoldChange"] < -10:
+                    log2foldchange.append(-10)
+                else:
+                    log2foldchange.append(analysis[i]["log2FoldChange"])
+                padj.append(-math.log10(analysis[i]['padj']))
+            cmmap = plt.cm.get_cmap('coolwarm')
+            plt.style.use('ggplot')
+            plt.scatter(range(len(x)), y, s=np.array(padj) * 200, c=log2foldchange, cmap=cmmap, alpha=0.8)
+            plt.xticks(range(len(x)), x)
+            plt.yticks([1], [condition["gene_ID"]])
+            plt.ylim(ymin=0.8, ymax=1.2)
+            plt.xlim(xmin=-1, xmax=len(analysis))
+            plt.clim(-10, 10)
+            plt.colorbar()
+            fig = plt.gcf()
+            fig.set_size_inches(13, 2)
+            fig.savefig('/opt/shimw/github/sex-associated/sadb/static/image/analysis/'+ condition["gene_ID"]+".png", bbox_inches="tight")
+            plt.clf()
+            taxname=analysis[0]["Scientific_name"].replace(" ","_").encode()
+            return {"analysis":analysis,"taxname":taxname}
 api.add_resource(get_analysis,'/api/analysis')
 
 get_phenotypes_fields={
