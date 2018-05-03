@@ -153,6 +153,9 @@ class get_detail(Resource):
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
         detail=mongo.db.gene_detail.find_one(condition)
+        ##the entrezgene is float with .0,so I change it in int
+        if detail["entrezgene"] !="":
+            detail["entrezgene"] = int(detail["entrezgene"])
         return detail
 api.add_resource(get_detail,'/api/get_detail')
 
@@ -395,8 +398,12 @@ get_result_fields={
     "Common_name": fields.String,
     "chromosome_name": fields.String,
     "pvalue": fields.Float,
-    "SRA_ID": fields.String,
-    "group": fields.String
+    "SRP_ID": fields.String,
+    "group": fields.String,
+    "FPKM_SRX_O":fields.String,
+    "FPKM_SRX_T":fields.String,
+    "SRX_O":fields.String,
+    "SRX_T":fields.String
 }
 get_analysis_fields={
     'analysis': fields.List(fields.Nested(get_result_fields)),
@@ -421,25 +428,31 @@ class get_analysis(Resource):
             for i in range(0,len(analysis)):
                 analysis[i]["group"]=chr(ord('A')+i)
                 x.append(chr(ord('A')+i))
-                if analysis[i]["log2FoldChange"] > 10:
-                    log2foldchange.append(10)
-                elif analysis[i]["log2FoldChange"] < -10:
-                    log2foldchange.append(-10)
+                if analysis[i]["log2FoldChange"] > 5:
+                    log2foldchange.append(5)
+                elif analysis[i]["log2FoldChange"] < -5:
+                    log2foldchange.append(-5)
                 else:
                     log2foldchange.append(analysis[i]["log2FoldChange"])
-                padj.append(-math.log10(analysis[i]['padj']))
-            cmmap = plt.cm.get_cmap('coolwarm')
+                if analysis[i]['padj']>=0.1:
+                    padj.append(-math.log10(0.1))
+                elif analysis[i]['padj']<=0.001:
+                    padj.append(-math.log10(0.001))
+                else:
+                    padj.append(-math.log10(analysis[i]['padj']))
+            cmmap = plt.cm.get_cmap('RdYlBu')
             plt.style.use('ggplot')
-            plt.scatter(range(len(x)), y, s=np.array(padj) * 200, c=log2foldchange, cmap=cmmap, alpha=0.8)
+            plt.scatter(range(len(x)), y, s=np.array(padj) * 300, c=log2foldchange, cmap=cmmap, alpha=0.8)
             plt.xticks(range(len(x)), x)
             plt.yticks([1], [condition["gene_ID"]])
             plt.ylim(ymin=0.8, ymax=1.2)
             plt.xlim(xmin=-1, xmax=len(analysis))
-            plt.clim(-10, 10)
-            plt.colorbar()
+            plt.clim(-5, 5)
+            char=plt.colorbar()
+            char.ax.set_title("log2FoldChange",fontsize=11)
             fig = plt.gcf()
-            fig.set_size_inches(13, 2)
-            fig.savefig('/opt/shimw/github/sex-associated/sadb/static/image/analysis/'+ condition["gene_ID"]+".png", bbox_inches="tight")
+            fig.set_size_inches(13, 1.5)
+            fig.savefig('/opt/shimw/github/sex-associated/sadb/static/image/analysis/'+ condition["gene_ID"]+".png", bbox_inches="tight",dpi=80)
             plt.clf()
             taxname=analysis[0]["Scientific_name"].replace(" ","_").encode()
             return {"analysis":analysis,"taxname":taxname}
