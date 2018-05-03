@@ -386,18 +386,18 @@ api.add_resource(get_proteins,'/api/get_proteins')
 
 get_result_fields={
     "stat":fields.String,
-    "baseMean": fields.Float,
+    "baseMean": fields.String,
     "Scientific_name": fields.String,
-    "padj": fields.Float,
+    "padj": fields.String,
     "gene_ID": fields.String,
     "external_gene_name": fields.String,
     "Taxon_id": fields.String,
     "entrezgene": fields.String,
-    "lfcSE": fields.Float,
-    "log2FoldChange": fields.Float,
+    "lfcSE": fields.String,
+    "log2FoldChange": fields.String,
     "Common_name": fields.String,
     "chromosome_name": fields.String,
-    "pvalue": fields.Float,
+    "pvalue": fields.String,
     "SRP_ID": fields.String,
     "group": fields.String,
     "FPKM_SRX_O":fields.String,
@@ -434,10 +434,13 @@ class get_analysis(Resource):
                     log2foldchange.append(-5)
                 else:
                     log2foldchange.append(analysis[i]["log2FoldChange"])
-                if analysis[i]['padj']>=0.1:
-                    padj.append(-math.log10(0.1))
-                elif analysis[i]['padj']<=0.001:
-                    padj.append(-math.log10(0.001))
+                if analysis[i]['padj']>=0.5:
+                    if analysis[i]['padj']=="NA":
+                        padj.append(0)
+                    else:
+                        padj.append(-math.log10(0.5))
+                elif analysis[i]['padj']<=0.0005:
+                    padj.append(-math.log10(0.0005))
                 else:
                     padj.append(-math.log10(analysis[i]['padj']))
             cmmap = plt.cm.get_cmap('RdYlBu')
