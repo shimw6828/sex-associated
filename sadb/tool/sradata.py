@@ -10,14 +10,14 @@ db.authenticate('sadb_admin','123456789',mechanism='SCRAM-SHA-1')
 def import_gene_info(inputfile, Taxon_id):
     basename = inputfile.split("/")[-1].split(".")[0].split("+")
     SRP=basename[0]
-    SRX_T=""
-    for srx in basename[1].split("_"):
-        SRX_T=SRX_T+srx+" "
-    SRX_T=SRX_T.strip(" ")
-    SRX_O = ""
-    for srx in basename[2].split("_"):
-        SRX_O=SRX_O+srx+" "
-    SRX_O = SRX_O.strip(" ")
+    with open("/opt/shimw/id_list.txt","r") as f:
+        sagd_id=f.readline().strip("\r\n")
+    os.system("sed -i '1d' /opt/shimw/id_list.txt")
+    SRX_T=basename[1].split("_")
+    SRX_O = basename[2].split("_")
+    db.sagd_id.insert_one({"sagd_id":sagd_id,"SRP_id":SRP,"SRX_T":SRX_T,"SRX_O":SRX_O})
+
+
     tax_list = pd.read_csv("/home/zhangna/SAdatabase/result/ensembl/Species_whole.csv",index_col="Taxon ID",dtype={'index':np.int})
     tissue_list=pd.read_csv("/opt/shimw/SRR_select_result311_human_end.csv",index_col="SRA_Experiment")
     if Taxon_id not in tax_list.index:
@@ -34,15 +34,13 @@ def import_gene_info(inputfile, Taxon_id):
     with open(inputfile) as reader:
         header=reader.readline().strip().split(',')
         for line in reader:
-            fields = line.rstrip("\n").split(",")
+            fields = line.rstrip("\r\n").split(",")
             record = dict(zip(header,fields))
             for k in record:
                 if k in ["baseMean","log2FoldChange","lfcSE","stat","pvalue","padj"]:
                     if record[k]!="NA":
                         record[k] = float(record[k])
-            record["SRP_ID"]=SRP
-            record["SRX_T"]=SRX_T
-            record["SRX_O"] = SRX_O
+            record["sagd_id"]=sagd_id
             record["Scientific_name"] = Scientific_name
             record["Common_name"] = Common_name
             record["tissue"]=tissue

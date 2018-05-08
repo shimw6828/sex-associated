@@ -91,10 +91,12 @@ input::-webkit-inner-spin-button {
     border-radius:5px;
 }
 td{
+    vertical-align:middle;
     text-align: center;
 }
 th{
     text-align: center;
+
 }
 .geneInfo_siderbar{
     position: fixed;
@@ -103,7 +105,6 @@ th{
     border-radius:7px;
 }
 
-.bg{
+.main{
     margin-top: 51px;
-    background-color: #ddd;
 }

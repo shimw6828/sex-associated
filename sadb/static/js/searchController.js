@@ -28,6 +28,7 @@ function searchController($scope,$http,$routeParams,sadbService) {
         }).then(
             function (response) {
                 $scope.gene_list = response.data.gene_list;
+                $scope.gene_list = response.data.gene_list;
             }
         )}
     }

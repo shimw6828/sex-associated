@@ -9,7 +9,7 @@ db = client.sadb
 db.authenticate('sadb_admin','123456789',mechanism='SCRAM-SHA-1')
 
 def import_gene_info(Taxon_id):
-    gene_info= pd.read_csv("/opt/shimw/gene_detail.csv")
+    gene_info= pd.read_csv("/opt/shimw/gene_detail.csv").fillna("")
 
     for i in gene_info['ensembl_gene_id']:
         detail=gene_info.loc[gene_info['ensembl_gene_id']==i]
@@ -29,8 +29,8 @@ def import_gene_info(Taxon_id):
     print("detail put in")
 
 def import_gene_structures():
-    Transcripts=pd.read_csv("/opt/shimw/gene_structures.csv")
-    exons=pd.read_csv("/opt/shimw/Transcript_exon.csv")
+    Transcripts=pd.read_csv("/opt/shimw/gene_structures.csv").fillna("")
+    exons=pd.read_csv("/opt/shimw/Transcript_exon.csv").fillna("")
     for ensembl_gene_id in Transcripts['ensembl_gene_id'].drop_duplicates():
         structures=Transcripts.loc[Transcripts['ensembl_gene_id']==ensembl_gene_id]
         records=[]
@@ -47,7 +47,7 @@ def import_gene_structures():
     print("structures put in")
 
 def import_Proteins():
-    Proteins=pd.read_csv("/opt/shimw/gene_Protein.csv")
+    Proteins=pd.read_csv("/opt/shimw/gene_Protein.csv").fillna("")
     for ensembl_gene_id in Proteins['ensembl_gene_id'].drop_duplicates():
         proteins=Proteins.loc[Proteins['ensembl_gene_id']==ensembl_gene_id]
         records=[]
@@ -62,7 +62,7 @@ def import_Proteins():
 
 def import_go_terms():
     go_terms=pd.read_csv("/opt/shimw/go_term.csv")
-    go_terms=go_terms.dropna(subset=["go_id"])
+    go_terms=go_terms.dropna(subset=["go_id"]).fillna("")
     for ensembl_gene_id in go_terms['ensembl_gene_id'].drop_duplicates():
         go_term=go_terms.loc[go_terms['ensembl_gene_id']==ensembl_gene_id]
         records = []
@@ -78,7 +78,7 @@ def import_go_terms():
 def import_gene_phenotype():
     if os.path.exists("/opt/shimw/gene_phenotype.csv"):
         gene_phenotypes=pd.read_csv("/opt/shimw/gene_phenotype.csv")
-        gene_phenotypes=gene_phenotypes.dropna(subset=["phenotype_description"])
+        gene_phenotypes=gene_phenotypes.dropna(subset=["phenotype_description"]).fillna("")
         for i in gene_phenotypes.index:
             gene_phenotype = gene_phenotypes.loc[i]
             record = {'ensembl_gene_id': gene_phenotype['ensembl_gene_id'],
@@ -93,7 +93,7 @@ def import_gene_phenotype():
 def import_pathway():
     if os.path.exists("/opt/shimw/gene_pathway.csv"):
         gene_pathways=pd.read_csv("/opt/shimw/gene_pathway.csv")
-        gene_pathways=gene_pathways.dropna(subset=["kegg_enzyme"])
+        gene_pathways=gene_pathways.dropna(subset=["kegg_enzyme"]).fillna("")
         for i in gene_pathways.index:
             record =dict(gene_pathways.ix[i])
             db.pathway.insert_one(record)
@@ -101,7 +101,7 @@ def import_pathway():
     print("pathway put in")
 
 def import_paralogue(Taxon_id):
-    paralogues=pd.read_csv("/opt/shimw/gene_paralogue.csv")
+    paralogues=pd.read_csv("/opt/shimw/gene_paralogue.csv").dropna(subset=["paralog_ensembl_gene"]).fillna("")
     paralogues_g=paralogues.groupby('ensembl_gene_id')
     for i in paralogues_g.groups:
         paralogue=list(paralogues.loc[paralogues_g.groups[i].values]['paralog_ensembl_gene'])
@@ -116,7 +116,7 @@ def import_paralogue(Taxon_id):
     print("paralogue put in")
 
 def import_homolog(Taxon_id):
-    homologs=pd.read_csv("/opt/shimw/gene_homolog.csv")
+    homologs=pd.read_csv("/opt/shimw/gene_homolog.csv").dropna(subset=["ortholog"]).fillna("")
     homologs_g=homologs.groupby('ensembl_gene_id')
     for i in homologs_g.groups:
         homolog=homologs.loc[homologs_g.groups[i].values]

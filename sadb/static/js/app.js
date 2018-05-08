@@ -1,6 +1,6 @@
 "use strict";
 
-angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize'])
+angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize','nsPopover'])
     .config(function($routeProvider){
         $routeProvider
             .when("/", {
@@ -15,9 +15,9 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
                 templateUrl:"/static/pages/taxonomy.html",
                 controller: "taxonomyController"
             })
-            .when("/query",{
-                templateUrl:"/static/pages/test.html",
-                controller: "testController"
+            .when("/search",{
+                templateUrl:"/static/pages/search.html",
+                controller: "searchController"
             })
             .when("/gene_info",{
                 templateUrl:"/static/pages/gene_info.html",
@@ -44,14 +44,17 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
     })
     .controller('navigation', navigation);
     function navigation($scope,$http,$routeParams,sadbService) {
+
         $("input").keyup(function(event){
             if(event.keyCode ==13){
             $scope.search_query();
         }
     });
+
     var flag=0
     var base_url = sadbService.getAPIBaseUrl();
     $scope.search_query = function () {
+
         var query_item = $('#search').val();
 
         if(/[@#\$%\^&\*]+/g.test(query_item)){
@@ -72,11 +75,14 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
 
         }
         $scope.filter_sra = function (query_sra) {
-            window.open(base_url+"#/sra_info?sra="+query_sra,"_self")
+            window.open(base_url+"#!/sra_info?sra="+query_sra,"_self")
         }
         $scope.filter_gene = function (query_gene) {
-            window.open(base_url+"#/gene_info?gene_id="+query_gene,"_self")
+            window.open(base_url+"#!/search?query="+query_gene,"_self")
         }
 
     }
+
+
+
 

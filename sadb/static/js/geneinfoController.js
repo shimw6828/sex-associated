@@ -1,10 +1,14 @@
 angular.module('sadb')
     .controller('geneinfoController', geneinfoController);
 
-function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$anchorScroll, $location){
+function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$anchorScroll, $location,$rootScope){
+
+    $rootScope.$on('$routeChangeStart',function () {
+        $('#footer').css('background-color','#FFFFFF');
+    });
     var base_url = sadbService.getAPIBaseUrl();
     $scope.get_gene_detail = function () {
-        console.log("detail work");
+
         $scope.gene_id=$routeParams.gene
         $http({
             url: base_url+'/api/get_detail',
@@ -13,7 +17,7 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
         }).then(
             function (response) {
                 $scope.gene_detail = response.data;
-                if ($scope.gene_detail.hgnc_id!="nan"){$scope.gene_detail.hgnc_id=$scope.gene_detail.hgnc_id.substr(5)}
+
             }
         )
         $http({
@@ -24,6 +28,10 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
             function (response) {
                 $scope.analysis = response.data.analysis;
                 $scope.taxname=response.data.taxname
+                console.log($scope.analysis)
+                $("#gene_detail_con").css('background-color','#fdeaee')
+                $("#gene_detail_con").css('background-color','#eaf9fd')
+                $('#footer').css('background-color','#eaf9fd')
             }
         )
         $http({
@@ -70,7 +78,6 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
         }).then(
             function (response) {
                 $scope.phenotypes = response.data
-                console.log($scope.phenotypes)
             }
         )
         $http({
@@ -88,7 +95,10 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
             method: 'GET'
         }).then(
             function success(response) {
-                $scope.paralogue = response.data
+                $scope.paralogue = response.data.paralogue
+                $scope.para_list=response.data.para_list
+                console.log($scope.para_list)
+
             },
             function error() {
                $scope.paralogue = 0
@@ -101,18 +111,29 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
             method: 'GET'
         }).then(
             function (response) {
-                $scope.homolog = response.data
+                $scope.homolog = response.data.homologs
+                $scope.homolog_list = response.data.homolog_list
+
+    //      $('td').each(function () {
+    //         console.log($(this).text())
+    //     if ($(this).text()=="nan" ||$(this).text()=="NaN"){
+    //         $(this).text("")
+    //     }
+    //
+    // })
             }
         )
 
 
-
     }
+
     $scope.get_gene_detail();
     $('body').scrollspy({target:'#geneInfo_siderbar',offset:90});
 
     $scope.goto = function (element) {
         $('html, body').animate({scrollTop:$(element).offset().top-51},100)
     }
+    $(function () { $(".popover a").popover({html : true });});
+
 
 }

@@ -13,15 +13,17 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-
+sagd_id_fields={
+    "SRP_id":fields.String,
+    "SRX_O":fields.List(fields.String),
+    "SRX_T":fields.List(fields.String)
+}
 
 gene_list_fields={
     'gene_ID':fields.String,
     'external_gene_name':fields.String,
     'baseMean':fields.Float,
-    'SRP':fields.String,
-    'SRX_T':fields.String,
-    'SRX_O':fields.String,
+    'sagd_id':fields.String,
     'FPKM_SRX_T':fields.Float,
     'FPKM_SRX_O':fields.Float,
     'chromosome_name':fields.String,
@@ -39,6 +41,7 @@ class search(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('page',type=int,default=1)
+        parser.add_argument('query', type=str)
         parser.add_argument('per_page', type=int, default=20)
         parser.add_argument('filter', type=str)
         parser.add_argument('min', type=str)
@@ -59,7 +62,7 @@ class search(Resource):
             condition["padj"]["$lte"] = float(args['max'])
 
 
-        results = list(mongo.db.total_result.find(condition).sort([("padj",-1)]).skip(record_skip).limit(per_page))
+        results = list(mongo.db.total_result.find(condition).sort([("padj",1)]).skip(record_skip).limit(per_page))
 
         gene_list_count = mongo.db.total_result.find(condition).count()
         gene_list = []
@@ -179,7 +182,7 @@ class get_summary(Resource):
             synonyms=""
             for i in summary["synonyms"]:
                 synonyms = synonyms + i +" "
-                summary["synonyms"]=synonyms.encode()
+            summary["synonyms"]=synonyms.encode()
         return summary
 
 api.add_resource(get_summary,'/api/get_summary')
@@ -305,7 +308,7 @@ class get_go_terms(Resource):
 api.add_resource(get_go_terms,'/api/get_go_terms')
 
 
-get_homolog_fields={
+homolog_fields={
     "ortholog":fields.String,
     "homolog_perc_id_r1":fields.Float,
     "homolog_perc_id": fields.Float,
@@ -313,6 +316,10 @@ get_homolog_fields={
     "ortholog_external_gene_name": fields.String,
     "external_gene_name": fields.String,
     "homolog_orthology_confidence": fields.String
+}
+get_homolog_fields={
+    "homologs":fields.List(fields.Nested(homolog_fields)),
+    "homolog_list":fields.Integer(default=0)
 }
 class get_homolog(Resource):
     @marshal_with(get_homolog_fields)
@@ -324,12 +331,13 @@ class get_homolog(Resource):
         condition["ensembl_gene_id"] = args['gene']
         homolog=mongo.db.homolog.find_one(condition)
         if homolog:
-            return homolog['homologs']
+            homolog_list=len(homolog['homologs'])
+            return {"homologs":homolog['homologs'],"homolog_list":homolog_list}
 
 api.add_resource(get_homolog,'/api/get_homolog')
 
 
-get_paralogue_fields={
+paralogue_fields={
     "paralog_ensembl_gene":fields.String,
     'paralog_gene_name': fields.String,
     'paralog_gene_chromosome':fields.String,
@@ -337,6 +345,10 @@ get_paralogue_fields={
     'paralog_gene_end':fields.Integer,
     'external_gene_name': fields.String,
     'ensembl_gene_id':fields.String
+}
+get_paralogue_fields={
+    'paralogue': fields.List(fields.Nested(paralogue_fields)),
+    'para_list':fields.Integer(default=0)
 }
 class get_paralogue(Resource):
     @marshal_with(get_paralogue_fields)
@@ -346,11 +358,11 @@ class get_paralogue(Resource):
         args = parser.parse_args()
         condition = {}
         condition["ensembl_gene_id"] = args['gene']
-
         result = mongo.db.paralogue.find_one(condition)
         if result:
             paralogue=[]
-            for i in result:
+            para_list=len(result["paralog_ensembl_gene"])
+            for i in result["paralog_ensembl_gene"]:
                 k={}
                 k["paralog_ensembl_gene"]=i["paralog_ensembl_gene"]
                 paralog_gene=mongo.db.gene_detail.find_one({"ensembl_gene_id": k["paralog_ensembl_gene"]})
@@ -361,7 +373,7 @@ class get_paralogue(Resource):
                 k["ensembl_gene_id"]=condition["ensembl_gene_id"]
                 k["external_gene_name"]=mongo.db.gene_detail.find_one({"ensembl_gene_id" :condition["ensembl_gene_id"]},{"external_gene_name":1})["external_gene_name"]
                 paralogue.append(k)
-            return paralogue
+            return {"paralogue":paralogue,"para_list":para_list}
 api.add_resource(get_paralogue,'/api/get_paralogue')
 
 get_proteins_fields={
@@ -398,12 +410,10 @@ get_result_fields={
     "Common_name": fields.String,
     "chromosome_name": fields.String,
     "pvalue": fields.String,
-    "SRP_ID": fields.String,
-    "group": fields.String,
+    "sagd_id": fields.String,
     "FPKM_SRX_O":fields.String,
     "FPKM_SRX_T":fields.String,
-    "SRX_O":fields.String,
-    "SRX_T":fields.String
+    "SRA":sagd_id_fields
 }
 get_analysis_fields={
     'analysis': fields.List(fields.Nested(get_result_fields)),
@@ -419,15 +429,14 @@ class get_analysis(Resource):
         condition = {}
         condition["gene_ID"] = args['gene']
         analysis=list(mongo.db.total_result.find(condition))
-
         if analysis:
             x = []
             y = [1 for i in range(len(analysis))]
             log2foldchange = []
             padj = []
             for i in range(0,len(analysis)):
-                analysis[i]["group"]=chr(ord('A')+i)
-                x.append(chr(ord('A')+i))
+                x.append(analysis[i]["sagd_id"])
+                analysis[i]["SRA"]=mongo.db.sagd_id.find_one({"sagd_id":analysis[i]["sagd_id"]})
                 if analysis[i]["log2FoldChange"] > 5:
                     log2foldchange.append(5)
                 elif analysis[i]["log2FoldChange"] < -5:

@@ -34,13 +34,15 @@
     <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1">
         <thead>
         <tr>
-            <th style="text-align: center" ts-criteria="gene_id">Gene ID</th>
-            <th style="text-align: center" ts-criteria="symbol">symbol</th>
-            <th style="text-align: center" ts-criteria="baseMean|parseFloat">baseMean</th>
-            <th style="text-align: center" ts-criteria="SRA ID">SRA ID</th>
-            <th style="text-align: center" ts-criteria="Chromosome">Chromosome</th>
-            <th style="text-align: center" ts-criteria="log2FoldChange|parseFloat">log2FoldChange</th>
-            <th style="text-align: center" ts-criteria="padj|parseFloat" >padj</th>
+            <th ts-criteria="gene_id">Gene ID</th>
+            <th ts-criteria="symbol">symbol</th>
+            <th ts-criteria="SAGD ID">SAGD ID</th>
+            <th ts-criteria="baseMean">baseMean</th>
+            <th ts-criteria="FPKM MALE">FPKM(♂)</th>
+            <th ts-criteria="FPKM FEMALE">FPKM(♀)</th>
+            <th ts-criteria="Chromosome">Chromosome</th>
+            <th ts-criteria="log2FoldChange">log2FoldChange</th>
+            <th ts-criteria="padj" >padj</th>
         </tr>
         </thead>
         <tbody>
@@ -50,12 +52,14 @@
                         {{ gene.gene_ID }}
                     </a>
                 </td>
-                <td style="text-align: center">{{ gene.external_gene_name }}</td>
-                <td style="text-align: center">{{ gene.baseMean }}</td>
-                <td style="text-align: center">{{ gene.SRA_ID }}</td>
-                <td style="text-align: center">{{ gene.chromosome_name }}</td>
-                <td style="text-align: center">{{ gene.log2FoldChange }}</td>
-                <td style="text-align: center">{{ gene.padj }}</td>
+                <td>{{ gene.external_gene_name }}</td>
+                <td>{{ gene.gene.sagd_id }}</td>
+                <td>{{ gene.baseMean }}</td>
+                <td>{{ gene.FPKM_SRX_T }}</td>
+                <td>{{ gene.FPKM_SRX_O }}</td>
+                <td>{{ gene.chromosome_name }}</td>
+                <td>{{ gene.log2FoldChange }}</td>
+                <td>{{ gene.padj }}</td>
             </tr>
 
 

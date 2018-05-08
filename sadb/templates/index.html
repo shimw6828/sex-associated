@@ -19,6 +19,7 @@
     <script src="{{ url_for('static',filename='lib/angular-ui-select/select.js') }}"></script>
     <script src="{{ url_for('static',filename='lib/angular/angular-route.min.js') }}"></script>
     <script src="{{ url_for('static',filename='lib/angular-paging/paging.js') }}"></script>
+    <script src="{{ url_for('static',filename='lib/nsPopover.js') }}"></script>
     <script src="{{ url_for('static',filename='js/app.js') }}"></script>
     <script src="{{ url_for('static',filename='lib/angular-tablesort/angular-tablesort.js') }}"></script>
     <script src="{{ url_for('static',filename='lib/bootstrap3-typeahead/bootstrap3-typeahead.min.js') }}"></script>
@@ -28,15 +29,16 @@
 <body>
 <div ng-include="'/static/partials/navigation.html'"></div>
 
-<div class="bg">
+<div class="main" >
     <div ng-view></div>
 </div>
 
-<div ng-include="'/static/partials/footer.html'"></div>
+<div ng-include="'/static/partials/footer.html'" id="footer"></div>
 </body>
     <script src="{{ url_for('static',filename='js/HomeController.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/testController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/searchController.js') }}"></script>
     <script src="{{ url_for('static',filename='js/browseController.js') }}"></script>
     <script src="{{ url_for('static',filename='js/taxonomyController.js') }}"></script>
-<script src="{{ url_for('static',filename='js/geneinfoController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/geneinfoController.js') }}"></script>
+
 </html>
