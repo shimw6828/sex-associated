@@ -13,11 +13,11 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-sagd_id_fields={
-    "SRP_id":fields.String,
-    "SRX_O":fields.List(fields.String),
-    "SRX_T":fields.List(fields.String)
-}
+# sagd_id_fields={
+#     "SRP_id":fields.String,
+#     "SRX_O":fields.List(fields.String),
+#     "SRX_T":fields.List(fields.String)
+# }
 
 gene_list_fields={
     'gene_ID':fields.String,
@@ -412,9 +412,10 @@ get_result_fields={
     "pvalue": fields.String,
     "sagd_id": fields.String,
     "FPKM_SRX_O":fields.String,
-    "FPKM_SRX_T":fields.String,
-    "SRA":sagd_id_fields
+    "FPKM_SRX_T":fields.String
+
 }
+# "SRA":sagd_id_fields
 get_analysis_fields={
     'analysis': fields.List(fields.Nested(get_result_fields)),
     'taxname': fields.String

@@ -23,6 +23,10 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
                 templateUrl:"/static/pages/gene_info.html",
                 controller: "geneinfoController"
             })
+            .when("/sagd_id",{
+                templateUrl:"/static/pages/sagd_id.html",
+                controller: "sagdidController"
+            })
             .when("/browse",{
                 templateUrl:"/static/pages/browse.html",
                 controller: "browseController"

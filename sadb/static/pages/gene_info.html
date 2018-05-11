@@ -105,7 +105,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="gene in analysis" ts-repeat>
-                        <td><p><a>{{ gene.sagd_id }}</a></p></td>
+                        <td><a ng-href="#!/sagd_id?sagd_id={{ gene.sagd_id }}">{{ gene.sagd_id }}</a></td>
                         <td>{{ gene.baseMean }}</td>
                         <td>{{ gene.FPKM_SRX_T }}</td>
                         <td>{{ gene.FPKM_SRX_O }}</td>

@@ -1,0 +1,38 @@
+<div class="container">
+    <table class="table table-bordered table-hover table-condensed" ts-wrapper>
+        <thead>
+        <tr>
+            <th ts-criteria="SRP">SRP</th>
+            <th ts-criteria="SRS">SRS</th>
+            <th ts-criteria="SRX">SRX</th>
+            <th ts-criteria="SRR">SRR</th>
+            <th ts-criteria="FPKM MALE">FPKM(♂)</th>
+            <th ts-criteria="Specie">Species</th>
+            <th ts-criteria="sex">sex</th>
+            <th ts-criteria="tissue">tissue</th>
+            <th ts-criteria="stage" >stage</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in items" ts-repeat>
+                 <td>
+                    <a href="#!/gene_info?gene={{ gene.gene_ID }}" target="_self" ng-click="gene_detail()">
+                        {{ gene.gene_ID }}
+                    </a>
+                </td>
+                <td>{{ gene.external_gene_name }}</td>
+                <td>{{ gene.gene.sagd_id }}</td>
+                <td>{{ gene.baseMean }}</td>
+                <td>{{ gene.FPKM_SRX_T }}</td>
+                <td>{{ gene.FPKM_SRX_O }}</td>
+                <td>{{ gene.chromosome_name }}</td>
+                <td>{{ gene.log2FoldChange }}</td>
+                <td>{{ gene.padj }}</td>
+            </tr>
+
+
+        </tbody>
+    </table>
+
+
+</div>

@@ -32,6 +32,10 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
                 $("#gene_detail_con").css('background-color','#fdeaee')
                 $("#gene_detail_con").css('background-color','#eaf9fd')
                 $('#footer').css('background-color','#eaf9fd')
+                $(function (){
+                    $("[data-toggle='popover']").popover();
+                });
+
             }
         )
         $http({
@@ -133,7 +137,6 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
     $scope.goto = function (element) {
         $('html, body').animate({scrollTop:$(element).offset().top-51},100)
     }
-    $(function () { $(".popover a").popover({html : true });});
 
 
 }
