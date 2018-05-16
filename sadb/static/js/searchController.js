@@ -6,13 +6,14 @@ function searchController($scope,$http,$routeParams,sadbService) {
     $scope.fetch_gene = function(){
          $http({
             url: base_url+'/api/search',
-            params: {gene_id:$routeParams.query},
+            params: {query:$routeParams.query},
             method: 'GET'
         }).then(
             function (response) {
                 console.log(response);
                 $scope.gene_list_count = response.data.gene_list_count;
                 $scope.gene_list = response.data.gene_list;
+                console.log($scope.gene_list_count)
             }
         )
     };

@@ -53,7 +53,7 @@
                     </a>
                 </td>
                 <td>{{ gene.external_gene_name }}</td>
-                <td>{{ gene.gene.sagd_id }}</td>
+                <td><a ng-href="#!/sagd_id?sagd_id={{ gene.sagd_id }}">{{ gene.sagd_id }}</a></td>
                 <td>{{ gene.baseMean }}</td>
                 <td>{{ gene.FPKM_SRX_T }}</td>
                 <td>{{ gene.FPKM_SRX_O }}</td>
