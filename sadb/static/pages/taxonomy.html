@@ -1,95 +1,49 @@
+
 <div class="container">
-    <div >
-        <a href="#/"><img src="/static/image/top.png" style="width: 100%;height: 100px"></a>
+
+
+<div style="width:800px;margin-right:auto;margin-left:auto;">
+    <div style="padding-left:5px ;">
+        <div class="panel panel-info">
+            <div class="panel-heading"><h4 style="margin: 0px">Species: {{ specie.Scientific_name }}</h4></div>
+            <div class="panel-body">
+                <img src="/static/image/species/{{ Scientific_name }}.png" alt="" height="100px" style="flaot:left; display:inline-block";>
+                <div style="display:inline-block;margin-left: 15px">
+                    <div style="display:inline-block">
+                    <p style="margin-bottom: 0px">Common name: {{ specie.Common_name }}</p>
+                    <p style="margin-bottom: 0px">Taxonomy ID: {{ specie.Taxonomy_ID }}</p>
+                </div>
+                <div style="display:inline-block;margin-left:30px">
+                    <p style="margin-bottom: 0px">genome: <a href="{{ taxonomy.geneome }}">{{ taxonomy.geneomename }}</a></p>
+                    <p style="margin-bottom: 0px">annotation: <a href="{{ taxonomy.annotation }}">{{ taxonomy.annotationname }}</a></p>
+                </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+    <div class="panel panel-default" style="margin: 5px">
+    <img src="/static/image/help.png" alt="" style="width:30px;float: right;margin-top: -3px;cursor: pointer" data-toggle="tooltip" data-placement="bottom" title="The color presents the sex bias of the SAG with the lowest padj in the dataset (female: red, male: blue).">
+    <div class="sagd_con" ng-repeat="sagd in sagd_list" style="background-color: {{ sagd.background }};">
+        <p xmlns:mml="http://www.w3.org/1998/Math/MathML" class="title" style="margin-bottom: 3px">
+            <a href="#!/sagd_list?sagd_id={{ sagd.sagd_id }}" target="_blank" style="text-decoration:underline;font-size:110%;">{{ sagd.sagd_id }}</a>
+        </p>
+        <div>
+            <samll>SRP: <a ng-href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ sagd.SRA_Study }}" target="_blank">{{ sagd.SRA_Study }}</a></samll>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<samll>Tissue: {{ sagd.Tissue }}</samll>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<samll>Stage: {{ sagd.Stage }}</samll>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<samll>SAG number: {{ sagd.sag_num }}</samll>
+            <p style="margin: 0px">significant genes: </p>
+            <small ng-repeat="gene in sagd.significant_gene">&nbsp&nbsp&nbsp&nbspGene id: <a href="#!/gene_info?gene={{ gene.ensembl_gene_id }}" target="_blank">{{ gene.ensembl_gene_id }}</a> &nbsp&nbsp symbol: {{ gene.symbol }} &nbsp&nbsp padj:{{ gene.padj }} &nbsp&nbsp log2(M/F ratio): {{ gene.log2FoldChange }}<br></small>
 
-<div class="row" style="margin-top: 2%">
-    <div class="col-md-4" style="padding:0">
-        <ui-select ng-model="taxonomy" theme="selectize" style="width: 300px;"  ng-change="update_taxon()" title="Choose a taxonomy">
-        <ui-select-match placeholder="Select or search a specie in the list...">{{$select.selected.Common_name}}</ui-select-match>
-        <ui-select-choices repeat="taxon in taxons | filter:$select.search">
-            <span ng-bind-html="taxon.Common_name | highlight: $select.search"></span>
-        </ui-select-choices>
-        </ui-select>
+
+        </div>
+
+
+
     </div>
-
-    <form class="pull-right"  accept-charset="UTF-8"  ng-hide="gene_list_count>15">
-        <input type="text" id="filter_search_2" class="form-control" >
-    </form>
-
-</div>
-
-
-
-
-<div class="row">
-<div class="col-md-7" style="padding:0">
-    <div paging
+        </div>
+        <div paging
          page="currentPage"
          page-size=20
-         total="gene_list_count"
-         scroll-top="true"
-         hide-if-empty="true"
-         show-prev-next="true"
-         show-first-last="true"
-         text-title-page="Page {page} Hover Over"
-         text-title-first="First hover"
-         text-title-last="Last hover"
-         text-title-next="Next hover"
-         text-title-prev="Prev hover"
-         show-prev-next="true"
-         show-first-last="true"
-         ul-class="pagination"
-         active-class="active"
-         disabled-class="disabled"
-         paging-action="update_taxon('test',page,page-size)"
-    >
-    </div></div>
-    <form class="form-inline" style="transform: translateY(90%)" ng-show="gene_list_count >= 15">
-        padj:
-        <input type="number" id="min" style="width: 40px"  >
-        ~
-        <input type="number" id="max" style="width: 40px"  >
-    </form>
-    <form class="pull-right" style="transform: translateY(-20%)" accept-charset="UTF-8"  ng-show="gene_list_count >= 15">
-        <input type="text" id="filter_search" class="form-control" >
-    </form>
-
-</div>
-    <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1">
-        <thead>
-        <tr>
-            <th ts-criteria="gene_id">Gene ID</th>
-            <th ts-criteria="symbol">symbol</th>
-            <th ts-criteria="baseMean|parseFloat">baseMean</th>
-            <th ts-criteria="SAGD ID">SAGD ID</th>
-            <th ts-criteria="Chromosome">Chromosome</th>
-            <th ts-criteria="log2FoldChange|parseFloat">log2FoldChange</th>
-            <th ts-criteria="padj|parseFloat" >padj</th>
-        </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="gene in gene_list" ts-repeat>
-                 <td>
-                    <a href="#!/gene_info?gene={{ gene.gene_ID }}" target="_self" ng-click="gene_detail()">
-                        {{ gene.gene_ID }}
-                    </a>
-                </td>
-                <td style="text-align: center">{{ gene.external_gene_name }}</td>
-                <td style="text-align: center">{{ gene.baseMean }}</td>
-                <td style="text-align: center">{{ gene.sagd_id }}</td>
-                <td style="text-align: center">{{ gene.chromosome_name }}</td>
-                <td style="text-align: center">{{ gene.log2FoldChange }}</td>
-                <td style="text-align: center">{{ gene.padj }}</td>
-            </tr>
-
-
-        </tbody>
-    </table>
-    <div paging
-         page="currentPage"
-         page-size=20
-         total="gene_list_count"
+         total="sagd_list_count"
          scroll-top="true"
          hide-if-empty="true"
          show-prev-next="true"
@@ -107,4 +61,7 @@
          paging-action="update_taxon('default',page,page-size)"
     >
     </div>
+</div>
+
+
 </div>

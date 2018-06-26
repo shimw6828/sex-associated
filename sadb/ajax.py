@@ -19,58 +19,75 @@ import matplotlib.pyplot as plt
 #     "SRX_T":fields.List(fields.String)
 # }
 
-gene_list_fields={
+gene_fields={
     'gene_ID':fields.String,
     'external_gene_name':fields.String,
-    'baseMean':fields.Float,
     'sagd_id':fields.String,
-    'FPKM_SRX_T':fields.Float,
-    'FPKM_SRX_O':fields.Float,
+    'FPKM_F':fields.String,
+    'FPKM_M':fields.String,
     'chromosome_name':fields.String,
     'log2FoldChange':fields.Float,
     'padj':fields.Float,
-    'Scientific_name':fields.String
+    'Scientific_name':fields.String,
+    'Common_name':fields.String
 }
 
-taxonomy_fields={
-    'gene_list': fields.List(fields.Nested(gene_list_fields)),
+gene_list_fields={
+    'gene_list': fields.List(fields.Nested(gene_fields)),
     'gene_list_count': fields.Integer
 }
 class search(Resource):
-    @marshal_with(taxonomy_fields)
+    @marshal_with(gene_list_fields)
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('page',type=int,default=1)
         parser.add_argument('query', type=str)
         parser.add_argument('per_page', type=int, default=20)
         parser.add_argument('filter', type=str)
-        parser.add_argument('min', type=str)
-        parser.add_argument('max', type=str)
+        parser.add_argument('update', type=str)
+        parser.add_argument('padj', type=str)
         args = parser.parse_args()
         page = args['page']
         per_page = args['per_page']
         record_skip = (page - 1) * per_page
         condition = {}
-        condition["padj"]={"$gte":0,"$lte":1}
+        print(args['query'])
+
         if args['query']:
             condition["$or"]=[{"gene_ID":{"$regex": args["query"],"$options": "$i"}},
                               {"external_gene_name":{"$regex": args["query"],"$options": "$i"}},
-                              {"chromosome_name":{"$regex": args["query"],"$options": "$i"}}]
-        if args['min'] :
-            condition["padj"]["$gte"]= float(args['min'])
-        if args['max']:
-            condition["padj"]["$lte"] = float(args['max'])
+                              {"chromosome_name":{"$regex": args["query"],"$options": "$i"}},
+                              {"Tissue": {"$regex": args["query"], "$options": "$i"}},
+                              {"Stage": {"$regex": args["query"], "$options": "$i"}}]
+        # if args['min'] or args['max']:
+        #     condition["padj"] = {"$gte": 0, "$lte": 1}
+        # if args['min'] :
+        #     print(args['min'])
+        #     condition["padj"]["$gte"]= float(args['min'])
+        # if args['max']:
+        #     print(args['max'])
+        #     condition["padj"]["$lte"] = float(args['max'])
+        if args['padj']:
+            if args['padj']!="":
+                condition["padj"]={"$lt":float(args['padj'])}
+                print(condition)
 
 
-        results = list(mongo.db.total_result.find(condition).sort([("padj",1)]).skip(record_skip).limit(per_page))
 
-        gene_list_count = mongo.db.total_result.find(condition).count()
+        results = list(mongo.db.total_result.find(condition).sort([('padj',1)]).skip(record_skip).limit(per_page))
+        if args["update"]!="update":
+            print(condition)
+            gene_list_count = mongo.db.total_result.find(condition).count()
+            print(gene_list_count)
+        else:
+            gene_list_count=0
         gene_list = []
 
         for result in results:
             if type(result["external_gene_name"])==float:
                 result["external_gene_name"]=""
             gene_list.append(result)
+        print(gene_list)
         return {"gene_list":gene_list,"gene_list_count":gene_list_count}
 
 api.add_resource(search, '/api/search')
@@ -83,7 +100,7 @@ class get_common_name(Resource):
     @marshal_with(commne_name_fields)
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('taxon_id', type=int)
+        parser.add_argument('taxon_id', type=str)
         args = parser.parse_args()
         condition = {}
         condition['Taxonomy_Id'] = args['taxon_id']
@@ -93,45 +110,47 @@ class get_common_name(Resource):
 api.add_resource(get_common_name,'/api/get_common_name')
 
 
+significant_fields={
+    "log2FoldChange": fields.Float,
+    "symbol": fields.String,
+    "padj": fields.Float,
+    "ensembl_gene_id": fields.String
+}
 
+taxon_sagd_fields={
+    "significant_gene":fields.List(fields.Nested(significant_fields)),
+    "sagd_id":fields.String,
+    "Common_name":fields.String,
+    "Tissue":fields.String,
+    "Scientific_name":fields.String,
+    "Taxonomy_ID":fields.String,
+    "SRA_Study":fields.String,
+    "background":fields.String,
+    "Stage":fields.String,
+    "sag_num":fields.String
+}
+taxonomy_fields={
+    'sagd_list': fields.List(fields.Nested(taxon_sagd_fields)),
+    'sagd_list_count': fields.Integer
+}
 class get_taxonomy_list(Resource):
     @marshal_with(taxonomy_fields)
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('page',type=int,default=1)
-        parser.add_argument('per_page', type=int, default=20)
-        parser.add_argument('taxon_id', type=int)
-        parser.add_argument('filter', type=str)
-        parser.add_argument('sort', type=str,default="default")
-        parser.add_argument('min', type=str)
-        parser.add_argument('max', type=str)
+        parser.add_argument('per_page', type=int, default=10)
+        parser.add_argument('taxon_id', type=str)
         args = parser.parse_args()
         page = args['page']
         per_page = args['per_page']
         record_skip = (page - 1) * per_page
         condition = {}
-        condition['Taxon_id'] = args['taxon_id']
-        condition["padj"]={"$gte":0,"$lte":1}
-        if args['filter']:
-            condition["$or"]=[{"gene_ID":{"$regex": args["filter"],"$options": "$i"}},
-                              {"external_gene_name":{"$regex": args["filter"],"$options": "$i"}},
-                              {"chromosome_name":{"$regex": args["filter"],"$options": "$i"}}]
-        if args['min'] :
-            condition["padj"]["$gte"]= float(args['min'])
-        if args['max']:
-            condition["padj"]["$lte"] = float(args['max'])
+        condition['Taxonomy_ID'] = str(args['taxon_id'])
+        print(condition)
+        sagd_list = list(mongo.db.taxon_sagd.find(condition).skip(record_skip).limit(per_page))
+        sagd_list_count = mongo.db.taxon_sagd.find(condition).count()
 
-
-        results = list(mongo.db.total_result.find(condition).sort([("padj",-1)]).skip(record_skip).limit(per_page))
-
-        gene_list_count = mongo.db.total_result.find(condition).count()
-        gene_list = []
-
-        for result in results:
-            if type(result["external_gene_name"])==float:
-                result["external_gene_name"]=""
-            gene_list.append(result)
-        return {"gene_list":gene_list,"gene_list_count":gene_list_count}
+        return {"sagd_list":sagd_list,"sagd_list_count":sagd_list_count}
 api.add_resource(get_taxonomy_list,'/api/taxonomy_list')
 
 
@@ -411,8 +430,10 @@ get_result_fields={
     "chromosome_name": fields.String,
     "pvalue": fields.String,
     "sagd_id": fields.String,
-    "FPKM_SRX_O":fields.String,
-    "FPKM_SRX_T":fields.String
+    "FPKM_M":fields.String,
+    "FPKM_F":fields.String,
+    "Tissue":fields.String,
+    "Stage":fields.String
 
 }
 # "SRA":sagd_id_fields
@@ -460,11 +481,9 @@ class get_analysis(Resource):
             plt.yticks([1], [condition["gene_ID"]])
             plt.ylim(ymin=0.8, ymax=1.2)
             plt.xlim(xmin=-1, xmax=len(analysis))
-            plt.clim(-5, 5)
-            char=plt.colorbar()
-            char.ax.set_title("log2FoldChange",fontsize=11)
+            plt.xticks(rotation=60)
             fig = plt.gcf()
-            fig.set_size_inches(13, 1.5)
+            fig.set_size_inches(len(analysis), 2)
             fig.savefig('/opt/shimw/github/sex-associated/sadb/static/image/analysis/'+ condition["gene_ID"]+".png", bbox_inches="tight",dpi=80)
             plt.clf()
             taxname=analysis[0]["Scientific_name"].replace(" ","_").encode()
@@ -488,6 +507,258 @@ class get_phenotypes(Resource):
         return phenotypes
 api.add_resource(get_phenotypes,'/api/get_phenotypes')
 
+get_sagdid_fields={
+    "SRA_Run":fields.String,
+    "Scientific_name":fields.String,
+    "SRA_Study":fields.String,
+    "sagd_id":fields.String,
+    "Sex":fields.String,
+    "SRA_Experiment":fields.String,
+    "Tissue" :fields.String,
+    "Taxonomy_ID":fields.String,
+    "Stage":fields.String
+
+}
+
+class get_sagd_id(Resource):
+    @marshal_with(get_sagdid_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('sagd_id', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["sagd_id"] = args['sagd_id']
+        items=list(mongo.db.sagd_id.find(condition))
+        return items
+api.add_resource(get_sagd_id,'/api/get_sagd_id')
+
+class get_sagd_id_info(Resource):
+    @marshal_with(taxon_sagd_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('sagd_id', type=str)
+        args = parser.parse_args()
+        condition = {}
+        condition["sagd_id"] = args['sagd_id']
+        items=mongo.db.taxon_sagd.find_one(condition)
+        return items
+api.add_resource(get_sagd_id_info,'/api/get_sagd_id_info')
+
+
+class get_sagd_list(Resource):
+    @marshal_with(gene_list_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('page',type=int,default=1)
+        parser.add_argument('sagd_id', type=str)
+        parser.add_argument('per_page', type=int, default=20)
+        parser.add_argument('update', type=str)
+        parser.add_argument('padj', type=str)
+
+        args = parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
+        record_skip = (page - 1) * per_page
+        condition = {}
+        condition["sagd_id"]=args['sagd_id']
+        sagd_info=mongo.db.taxon_sagd.find_one(condition)
+        collections=sagd_info["Scientific_name"].split()[0][0]+"_"+sagd_info["Scientific_name"].split()[1]
+
+        if args['padj']:
+            if args['padj']!="":
+                condition["padj"]={"$lt":float(args['padj'])}
+
+        results = list(mongo.db[collections].find(condition).skip(record_skip).limit(per_page))
+        if args["update"]!="update":
+            print(condition)
+            gene_list_count = mongo.db[collections].find(condition).count()
+            print(gene_list_count)
+        else:
+            gene_list_count=0
+        gene_list = []
+
+        for result in results:
+            if type(result["external_gene_name"])==float:
+                result["external_gene_name"]=""
+            gene_list.append(result)
+        return {"gene_list":gene_list,"gene_list_count":gene_list_count}
+
+api.add_resource(get_sagd_list, '/api/get_sagd_list')
+
+class get_tissue(Resource):
+    def get(self):
+        condition = {}
+        items=mongo.db.total_result.distinct("Tissue",condition)
+        return items
+api.add_resource(get_tissue,'/api/tissue')
+
+class clickfilter(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('taxon_id', type=str)
+        parser.add_argument('tissue', type=str)
+        parser.add_argument('stage', type=str)
+        args = parser.parse_args()
+        condition = {}
+        if args['taxon_id']:
+            if args['taxon_id'] != "":
+                condition["Taxon_id"] = args['taxon_id']
+        if args['tissue']:
+            if args['tissue'] != "":
+                condition["Tissue"] = args['tissue']
+        if args['stage']:
+            if args['stage'] != "":
+                condition["Stage"] = args['stage']
+        print(condition)
+        tissue=mongo.db.total_result.distinct("Tissue",condition)
+        stage=mongo.db.total_result.distinct("Stage",condition)
+        taxons=mongo.db.total_result.distinct("Taxon_id",condition)
+        return {"tissue":tissue,"stage":stage,"taxons":taxons}
+api.add_resource(clickfilter,'/api/clickfilter')
+
+
+
+class get_filter_list(Resource):
+    @marshal_with(gene_list_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('taxon_id',type=str)
+        parser.add_argument('tissue', type=str)
+        parser.add_argument('stage', type=str)
+        parser.add_argument('log2_min', type=str)
+        parser.add_argument('log2_max', type=str)
+        parser.add_argument('padj', type=str)
+        parser.add_argument('per_page', type=int, default=20)
+        parser.add_argument('page', type=int, default=1)
+        args = parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
+        record_skip = (page - 1) * per_page
+        condition = {}
+        if args['taxon_id']:
+            if args['taxon_id']!="":
+                condition["Taxon_id"] = args['taxon_id']
+
+        if args['tissue']:
+            if args['tissue']!="":
+                condition["Tissue"]=args['tissue']
+        if args['stage']:
+            if args['stage']!="":
+                condition["Stage"]=args['stage']
+                print(condition)
+
+        if args['padj']:
+            if args['padj']!="":
+                condition["padj"]={"$lt":float(args['padj'])}
+                print(condition)
+
+        if args['log2_min'] or args['log2_max']:
+            condition["log2FoldChange"] = {}
+        if args['log2_min'] :
+            print(args['min'])
+            condition["log2FoldChange"]["$lt"]= float(args['log2_min'])
+        if args['log2_max']:
+            print(args['max'])
+            condition["log2FoldChange"]["$lt"] = float(args['log2_max'])
+        print(condition)
+        results = list(mongo.db.total_result.find(condition).skip(record_skip).limit(per_page))
+        print(results)
+        gene_list_count = mongo.db.total_result.find(condition).count()
+        # if args["update"]!="update":
+        #     print(condition)
+        #     gene_list_count = mongo.db.total_result.find(condition).count()
+        #     print(gene_list_count)
+        # else:
+        #     gene_list_count=0
+        gene_list = []
+
+        for result in results:
+            if type(result["external_gene_name"])==float:
+                result["external_gene_name"]=""
+            gene_list.append(result)
+        return {"gene_list":gene_list,"gene_list_count":gene_list_count}
+
+api.add_resource(get_filter_list, '/api/filter')
+
+gene_drug_fields={
+    "DrugBank_ID":fields.String,
+    "ensembl_gene_id":fields.String,
+    "Drug_name":fields.String,
+    "UniProt_Name":fields.String,
+    "Type":fields.String,
+    "UniProt ID":fields.String}
+gene_drug_list_fields={
+    'drug_list': fields.List(fields.Nested(gene_drug_fields)),
+    'drug_list_count': fields.String
+}
+
+class get_drug_list(Resource):
+    @marshal_with(gene_drug_list_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('query', type=str)
+        parser.add_argument('per_page', type=int, default=20)
+        parser.add_argument('page', type=int, default=1)
+        args = parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
+        record_skip = (page - 1) * per_page
+        condition = {}
+        if args['query']:
+            condition["$or"] = [{"DrugBank_ID": {"$regex": args["query"], "$options": "$i"}},
+                                {"ensembl_gene_id": {"$regex": args["query"], "$options": "$i"}},
+                                {"Drug_name": {"$regex": args["query"], "$options": "$i"}},
+                                {"Type": {"$regex": args["query"], "$options": "$i"}}]
+        drug_list = list(mongo.db.drug_info.find(condition).skip(record_skip).limit(per_page))
+        drug_list_count=mongo.db.drug_info.find(condition).count()
+
+        return {"drug_list":drug_list,"drug_list_count":drug_list_count}
+api.add_resource(get_drug_list,'/api/get_drug_list')
+
+gene_dataset_fields={
+    "SRA_Run" : fields.String,
+    "group" : fields.String,
+    "Scientific_name" :fields.String,
+    "SRA_Study" : fields.String,
+    "sagd_id" : fields.String,
+    "Sex" : fields.String,
+    "SRA_Experiment" :fields.String,
+    "Common_name" : fields.String,
+    "Tissue" :fields.String,
+    "Taxonomy_ID" : fields.String,
+    "Stage" : fields.String
+}
+gene_dataset_list_fields={
+    'dataset_list': fields.List(fields.Nested(gene_dataset_fields)),
+    'dataset_list_count': fields.String
+}
+class get_dataset_list(Resource):
+    @marshal_with(gene_dataset_list_fields)
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('query', type=str)
+        parser.add_argument('per_page', type=int, default=20)
+        parser.add_argument('page', type=int, default=1)
+        args = parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
+        record_skip = (page - 1) * per_page
+        condition = {}
+        if args['query']:
+            condition["$or"] = [{"SRA_Run": {"$regex": args["query"], "$options": "$i"}},
+                                {"Scientific_name": {"$regex": args["query"], "$options": "$i"}},
+                                {"SRA_Study": {"$regex": args["query"], "$options": "$i"}},
+                                {"sagd_id": {"$regex": args["query"], "$options": "$i"}},
+                                {"Sex": {"$regex": args["query"], "$options": "$i"}},
+                                {"SRA_Experiment": {"$regex": args["query"], "$options": "$i"}},
+                                {"Common_name": {"$regex": args["query"], "$options": "$i"}},
+                                {"Tissue": {"$regex": args["query"], "$options": "$i"}},
+                                {"Stage": {"$regex": args["query"], "$options": "$i"}},]
+        dataset_list = list(mongo.db.sagd_id.find(condition).skip(record_skip).limit(per_page))
+        dataset_list_count=mongo.db.sagd_id.find(condition).count()
+
+        return {"dataset_list":dataset_list,"dataset_list_count":dataset_list_count}
+api.add_resource(get_dataset_list,'/api/get_dataset_list')
 
 
 

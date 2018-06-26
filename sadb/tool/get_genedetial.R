@@ -80,15 +80,15 @@ print("paralogue")
 names(gene_paralogue)[2]="paralog_ensembl_gene"
 
 
-readr::write_csv(gene_detail,"/opt/shimw/gene_detail.csv")
-readr::write_csv(gene_structures,"/opt/shimw/gene_structures.csv")
-readr::write_csv(Transcript_exon,"/opt/shimw/Transcript_exon.csv")
-readr::write_csv(gene_Protein,"/opt/shimw/gene_Protein.csv")
-readr::write_csv(go_term,"/opt/shimw/go_term.csv")
-if (gene_phenotype!=F){readr::write_csv(gene_phenotype,"/opt/shimw/gene_phenotype.csv")}
-if (gene_pathway!=F){readr::write_csv(gene_pathway,"/opt/shimw/gene_pathway.csv")}
+readr::write_csv(gene_detail,paste("/opt/shimw/",taxon_id,"gene_detail.csv",sep = ""))
+readr::write_csv(gene_structures,paste("/opt/shimw/",taxon_id,"gene_structures.csv",sep = ""))
+readr::write_csv(Transcript_exon,paste("/opt/shimw/",taxon_id,"Transcript_exon.csv",sep = ""))
+readr::write_csv(gene_Protein,paste("/opt/shimw/",taxon_id,"gene_Protein.csv",sep = ""))
+readr::write_csv(go_term,paste("/opt/shimw/",taxon_id,"go_term.csv",sep = ""))
+if (gene_phenotype!=F){readr::write_csv(gene_phenotype,paste("/opt/shimw/",taxon_id,"gene_phenotype.csv",sep = ""))}
+if (gene_pathway!=F){readr::write_csv(gene_pathway,paste("/opt/shimw/",taxon_id,"gene_pathway.csv",sep = ""))}
 
-readr::write_csv(gene_paralogue,"/opt/shimw/gene_paralogue.csv")
+readr::write_csv(gene_paralogue,paste("/opt/shimw/",taxon_id,"gene_paralogue.csv",sep = ""))
 
 list_attr=listAttributes(ensembl)
 
@@ -118,7 +118,7 @@ purrr::map(grep(pattern = "_homolog_ensembl_gene", x = list_attr$name, value = T
 })%>%
   dplyr::bind_rows()->gene_homolog
 print("homolog")
-readr::write_csv(gene_homolog,"/opt/shimw/gene_homolog.csv")
+readr::write_csv(gene_homolog,paste("/opt/shimw/",taxon_id,"gene_homolog.csv",sep = ""))
 
 
 

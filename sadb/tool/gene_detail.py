@@ -9,7 +9,7 @@ db = client.sadb
 db.authenticate('sadb_admin','123456789',mechanism='SCRAM-SHA-1')
 
 def import_gene_info(Taxon_id):
-    gene_info= pd.read_csv("/opt/shimw/gene_detail.csv").fillna("")
+    gene_info= pd.read_csv("/opt/shimw/"+str(Taxon_id)+"gene_detail.csv").fillna("")
 
     for i in gene_info['ensembl_gene_id']:
         detail=gene_info.loc[gene_info['ensembl_gene_id']==i]
@@ -25,12 +25,12 @@ def import_gene_info(Taxon_id):
                 }
         record['Taxonomy_Id']=Taxon_id
         db.gene_detail.insert_one(record)
-    os.remove("/opt/shimw/gene_detail.csv")
+    os.remove("/opt/shimw/"+str(Taxon_id)+"gene_detail.csv")
     print("detail put in")
 
-def import_gene_structures():
-    Transcripts=pd.read_csv("/opt/shimw/gene_structures.csv").fillna("")
-    exons=pd.read_csv("/opt/shimw/Transcript_exon.csv").fillna("")
+def import_gene_structures(Taxon_id):
+    Transcripts=pd.read_csv("/opt/shimw/"+str(Taxon_id)+"gene_structures.csv").fillna("")
+    exons=pd.read_csv("/opt/shimw/"+str(Taxon_id)+"Transcript_exon.csv").fillna("")
     for ensembl_gene_id in Transcripts['ensembl_gene_id'].drop_duplicates():
         structures=Transcripts.loc[Transcripts['ensembl_gene_id']==ensembl_gene_id]
         records=[]
@@ -42,12 +42,12 @@ def import_gene_structures():
         result={"ensembl_gene_id":ensembl_gene_id,"Transcripts":records}
         db.gene_structures.insert_one(result)
 
-    os.remove("/opt/shimw/gene_structures.csv")
-    os.remove("/opt/shimw/Transcript_exon.csv")
+    os.remove("/opt/shimw/"+str(Taxon_id)+"gene_structures.csv")
+    os.remove("/opt/shimw/"+str(Taxon_id)+"Transcript_exon.csv")
     print("structures put in")
 
-def import_Proteins():
-    Proteins=pd.read_csv("/opt/shimw/gene_Protein.csv").fillna("")
+def import_Proteins(Taxon_id):
+    Proteins=pd.read_csv("/opt/shimw/"+str(Taxon_id)+"gene_Protein.csv").fillna("")
     for ensembl_gene_id in Proteins['ensembl_gene_id'].drop_duplicates():
         proteins=Proteins.loc[Proteins['ensembl_gene_id']==ensembl_gene_id]
         records=[]
@@ -57,11 +57,11 @@ def import_Proteins():
             records.append(protein)
         result = {"ensembl_gene_id": ensembl_gene_id, "Proteins": records}
         db.proteins.insert_one(result)
-    os.remove("/opt/shimw/gene_Protein.csv")
+    os.remove("/opt/shimw/"+str(Taxon_id)+"gene_Protein.csv")
     print("Protein put in")
 
-def import_go_terms():
-    go_terms=pd.read_csv("/opt/shimw/go_term.csv")
+def import_go_terms(Taxon_id):
+    go_terms=pd.read_csv("/opt/shimw/"+str(Taxon_id)+"go_term.csv")
     go_terms=go_terms.dropna(subset=["go_id"]).fillna("")
     for ensembl_gene_id in go_terms['ensembl_gene_id'].drop_duplicates():
         go_term=go_terms.loc[go_terms['ensembl_gene_id']==ensembl_gene_id]
@@ -72,12 +72,12 @@ def import_go_terms():
             records.append(record)
         result={"ensembl_gene_id":ensembl_gene_id,"go_terms":records}
         db.go_terms.insert_one(result)
-    os.remove("/opt/shimw/go_term.csv")
+    os.remove("/opt/shimw/"+str(Taxon_id)+"go_term.csv")
     print("go_term put in")
 
-def import_gene_phenotype():
-    if os.path.exists("/opt/shimw/gene_phenotype.csv"):
-        gene_phenotypes=pd.read_csv("/opt/shimw/gene_phenotype.csv")
+def import_gene_phenotype(Taxon_id):
+    if os.path.exists("/opt/shimw/"+str(Taxon_id)+"gene_phenotype.csv"):
+        gene_phenotypes=pd.read_csv("/opt/shimw/"+str(Taxon_id)+"gene_phenotype.csv")
         gene_phenotypes=gene_phenotypes.dropna(subset=["phenotype_description"]).fillna("")
         for i in gene_phenotypes.index:
             gene_phenotype = gene_phenotypes.loc[i]
@@ -87,21 +87,21 @@ def import_gene_phenotype():
                       'source_name': gene_phenotype['source_name']
                       }
             db.phenotype.insert_one(record)
-        os.remove("/opt/shimw/gene_phenotype.csv")
+        os.remove("/opt/shimw/"+str(Taxon_id)+"gene_phenotype.csv")
         print("phenotype put in")
 
-def import_pathway():
-    if os.path.exists("/opt/shimw/gene_pathway.csv"):
-        gene_pathways=pd.read_csv("/opt/shimw/gene_pathway.csv")
+def import_pathway(Taxon_id):
+    if os.path.exists("/opt/shimw/"+str(Taxon_id)+"gene_pathway.csv"):
+        gene_pathways=pd.read_csv("/opt/shimw/"+str(Taxon_id)+"gene_pathway.csv")
         gene_pathways=gene_pathways.dropna(subset=["kegg_enzyme"]).fillna("")
         for i in gene_pathways.index:
             record =dict(gene_pathways.ix[i])
             db.pathway.insert_one(record)
-    os.remove("/opt/shimw/gene_pathway.csv")
-    print("pathway put in")
+        os.remove("/opt/shimw/"+str(Taxon_id)+"gene_pathway.csv")
+        print("pathway put in")
 
 def import_paralogue(Taxon_id):
-    paralogues=pd.read_csv("/opt/shimw/gene_paralogue.csv").dropna(subset=["paralog_ensembl_gene"]).fillna("")
+    paralogues=pd.read_csv("/opt/shimw/"+str(Taxon_id)+"gene_paralogue.csv").dropna(subset=["paralog_ensembl_gene"]).fillna("")
     paralogues_g=paralogues.groupby('ensembl_gene_id')
     for i in paralogues_g.groups:
         paralogue=list(paralogues.loc[paralogues_g.groups[i].values]['paralog_ensembl_gene'])
@@ -112,18 +112,18 @@ def import_paralogue(Taxon_id):
                   'paralog_ensembl_gene': paralog
                   }
         db.paralogue.insert_one(record)
-    os.remove("/opt/shimw/gene_paralogue.csv")
+    os.remove("/opt/shimw/"+str(Taxon_id)+"gene_paralogue.csv")
     print("paralogue put in")
 
 def import_homolog(Taxon_id):
-    homologs=pd.read_csv("/opt/shimw/gene_homolog.csv").dropna(subset=["ortholog"]).fillna("")
+    homologs=pd.read_csv("/opt/shimw/"+str(Taxon_id)+"gene_homolog.csv").dropna(subset=["ortholog"]).fillna("")
     homologs_g=homologs.groupby('ensembl_gene_id')
     for i in homologs_g.groups:
         homolog=homologs.loc[homologs_g.groups[i].values]
         homo=get_homolog(homolog)
         record={'ensembl_gene_id':i,'homologs':homo}
         db.homolog.insert_one(record)
-    os.remove("/opt/shimw/gene_homolog.csv")
+    os.remove("/opt/shimw/"+str(Taxon_id)+"gene_homolog.csv")
     print("homolog put in")
 
 
@@ -154,11 +154,11 @@ if __name__ =="__main__":
     args = parser.parse_args()
     Taxon_id= args.Taxonomy
     import_gene_info(Taxon_id)
-    import_gene_structures()
-    import_Proteins()
-    import_go_terms()
-    import_gene_phenotype()
-    import_pathway()
+    import_gene_structures(Taxon_id)
+    import_Proteins(Taxon_id)
+    import_go_terms(Taxon_id)
+    import_gene_phenotype(Taxon_id)
+    import_pathway(Taxon_id)
     import_paralogue(Taxon_id)
     import_homolog(Taxon_id)
 

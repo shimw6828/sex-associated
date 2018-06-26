@@ -1,0 +1,133 @@
+
+<div  id="container" class="container">
+    <br>
+    <div >
+        <div class="col-md-2" style="padding-left: 0px;width: 135px" >
+            <ui-select ng-model="taxon" theme="selectize" style="width: 120px" title="Choose a taxonomy" ng-change="taxonclick({{$select.selected}})">
+            <ui-select-match placeholder="specie" id="species" >{{$select.selected.Common_name}}</ui-select-match>
+            <ui-select-choices repeat="taxon in taxons | filter:$select.search">
+                <span ng-bind-html="taxon.Common_name | highlight: $select.search"></span>
+            </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" style="width: 170px" >
+            <ui-select ng-model="tissue"  theme="selectize" style="width: 140px" title="Choose a tissue" ng-change="tissueclick('{{$select.selected}}')">
+            <ui-select-match placeholder="tissue" id="tissue">{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="tissue in tissues | filter:$select.search">
+                <span ng-bind-html="tissue | highlight: $select.search"></span>
+            </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-2" style="width: 170px" >
+            <ui-select ng-model="stage" theme="selectize" style="width: 140px" title="Choose a stage" ng-change="stageclick('{{$select.selected}}')">
+            <ui-select-match placeholder="stage" id="stage" >{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="stage in stages | filter:$select.search">
+                <span ng-bind-html="stage | highlight: $select.search"></span>
+            </ui-select-choices>
+            </ui-select>
+        </div>
+        <div class="col-md-3" style="width: 230px" >
+            <form class="form-inline" >
+            log2(M/F ratio):
+            <input type="number" id="log2_min" style="width: 40px"  >
+            ~
+            <input type="number" id="log2_max" style="width: 40px">
+        </form>
+        </div>
+        <div class="col-md-2" style="width: 170px" >
+            <ui-select ng-model="padj" theme="selectize" style="width: 140px" title="Choose a stage">
+            <ui-select-match placeholder="padj(default=0.05)" id="padj" >{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="padj in padjs | filter:$select.search">
+                <span ng-bind-html="padj | highlight: $select.search"></span>
+            </ui-select-choices>
+            </ui-select>
+        </div>
+        <button ng-click="filter_gene_list();nowloading()" type="button" class="btn btn-default pull-right" style="position: relative;bottom:5px">search</button>
+
+
+    </div>
+
+    <div class="col-md-7" style="padding:0">
+                    <div paging
+                 page="currentPage"
+                 page-size=20
+                 total="gene_list_count"
+                 scroll-top="true"
+                 hide-if-empty="true"
+                 show-prev-next="true"
+                 show-first-last="true"
+                 text-title-page="Page {page} Hover Over"
+                 text-title-first="First hover"
+                 text-title-last="Last hover"
+                 text-title-next="Next hover"
+                 text-title-prev="Prev hover"
+                 show-prev-next="true"
+                 show-first-last="true"
+                 ul-class="pagination"
+                 active-class="active"
+                 disabled-class="disabled"
+                 paging-action="update_filter('default',page,page-size)"
+            >
+            </div>
+    </div>
+        <table ng-show="loadcomp_t" class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1" >
+        <thead>
+        <tr>
+            <th ts-criteria="gene_id">Gene ID</th>
+            <th ts-criteria="symbol">symbol</th>
+            <th ts-criteria="SAGD ID">SAGD ID</th>
+            <th ts-criteria="Common_name">specie</th>
+            <th ts-criteria="FPKM MALE">FPKM(♂)</th>
+            <th ts-criteria="FPKM FEMALE">FPKM(♀)</th>
+            <th ts-criteria="Chromosome">Chromosome</th>
+            <th ts-criteria="log2(F/M ratio)">log2(F/M ratio)</th>
+            <th ts-criteria="padj" >padj</th>
+        </tr>
+        </thead>
+        <tbody >
+            <tr ng-repeat="gene in gene_list track by $index" ts-repeat>
+                 <td>
+                    <a href="#!/gene_info?gene={{ gene.gene_ID }}" target="_self" ng-click="gene_detail()">
+                        {{ gene.gene_ID }}
+                    </a>
+                </td>
+                <td>{{ gene.external_gene_name }}</td>
+                <td><a ng-href="#!/sagd_info?sagd_id={{ gene.sagd_id }}">{{ gene.sagd_id }}</a></td>
+                <td>{{ gene.Common_name }}</td>
+                <td>{{ gene.FPKM_F }}</td>
+                <td>{{ gene.FPKM_M }}</td>
+                <td>{{ gene.chromosome_name }}</td>
+                <td>{{ gene.log2FoldChange }}</td>
+                <td>{{ gene.padj }}</td>
+            </tr>
+
+
+        </tbody>
+    </table>
+    <div class="panel-body" ng-show="loadcomp_t"><p>Note: The sorting here is only for the search results displayed on the current page, instead of all the results.</p></div>
+    <div ng-hide="loadcomp_l" style="margin-bottom: 20px"><img class="aligncenter" src="/static/image/loading.gif" alt="" height="30px"></div>
+
+    <div paging
+         page="currentPage"
+         page-size=20
+         total="gene_list_count"
+         scroll-top="true"
+         hide-if-empty="true"
+         show-prev-next="true"
+         show-first-last="true"
+         text-title-page="Page {page} Hover Over"
+         text-title-first="First hover"
+         text-title-last="Last hover"
+         text-title-next="Next hover"
+         text-title-prev="Prev hover"
+         show-prev-next="true"
+         show-first-last="true"
+         ul-class="pagination"
+         active-class="active"
+         disabled-class="disabled"
+         paging-action="update_filter('default',page,page-size)"
+    >
+    </div>
+
+
+</div>

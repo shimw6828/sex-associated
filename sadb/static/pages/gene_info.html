@@ -1,7 +1,5 @@
 <div id="gene_detail_con">
-    <div >
-        <a ng-href="#!/"><img src="/static/image/top.png" style="width: 100%;height: 100px"></a>
-    </div>
+
 <div class="main-container row">
 
         <nav class="geneInfo_siderbar" id="geneInfo_siderbar">
@@ -9,12 +7,12 @@
 				<li class="active" ng-click="goto('#basic_info')"><a ng-href="#basic_info" onclick="return false">Gene information</a></li>
 				<li ng-click="goto('#analysis')"><a ng-href="#analysis" onclick="return false">Gene analysis</a></li>
 				<li ng-click="goto('#gene_model')"><a ng-href="#gene_model" onclick="return false">Gene Model</a></li>
-                <li ng-click="goto('#protein')"  ng-hide="proteins[0].ensembl_peptide_id==null"><a ng-href="#protein" onclick="return false">Protein</a></li>
-                <li ng-click="goto('#drug_info')" ng-hide="get_drug_info.length==0"><a ng-href="#drug_info" onclick="return false">Drug Target</a></li>
-                <li ng-click="goto('#gene_ontology')" ng-show="go_terms.length>0"><a ng-href="#gene_ontology" onclick="return false">Gene Ontology</a></li>
-                <li ng-click="goto('#phenotype')" ng-hide="phenotypes.length==0"><a ng-href="#phenotype" onclick="return false">Phenotype</a></li>
-                <li ng-click="goto('#paralog')" ng-show="para_list>0"><a ng-href="#paralog" onclick="return false">Paralog</a></li>
-                <li ng-click="goto('#ortholog')" ng-show="homolog_list>0"><a ng-href="#ortholog" onclick="return false">Ortholog</a></li>
+                <li ng-click="goto('#protein')" ><a ng-href="#protein" onclick="return false">Protein</a></li>
+                <li ng-click="goto('#drug_info')" ><a ng-href="#drug_info" onclick="return false">Drug Target</a></li>
+                <li ng-click="goto('#gene_ontology')" ><a ng-href="#gene_ontology" onclick="return false">Gene Ontology</a></li>
+                <li ng-click="goto('#phenotype')"><a ng-href="#phenotype" onclick="return false">Phenotype</a></li>
+                <li ng-click="goto('#paralog')"><a ng-href="#paralog" onclick="return false">Paralog</a></li>
+                <li ng-click="goto('#ortholog')"><a ng-href="#ortholog" onclick="return false">Ortholog</a></li>
 
 			</ul>
     </nav>
@@ -50,7 +48,7 @@
                 <br>
 
             </dl>
-            <div class="con panel panel-default">
+            <div class="con panel panel-default" style="max-height:223px;">
                     <table class="table table-hover table-bordered img-rounded" ts-wrapper style="margin-bottom: 0px">
                     <thead>
                         <tr>
@@ -85,37 +83,43 @@
             <div class="page-header">
                 <h2>Gene analysis</h2>
             </div>
-            <div class="row">
-                <img src="/static/image/analysis/{{ gene_id }}.png">
-                <img src="/static/image/sizescale.png">
+            <div class="row" style="text-align:center">
+                <div >
+                    <div style="overflow-y:auto;width: 800px;display:inline-block"><img src="/static/image/analysis/{{ gene_id }}.png"></div>
+                    <img style="vertical-align: top" src="/static/image/colorbar.png">
+                    <img style="vertical-align: top" src="/static/image/sizescale.png">
+                </div>
             </div>
             <div class="con panel panel-default">
                 <table class="table table-hover table-bordered" ts-wrapper>
                     <thead>
                     <tr>
                         <th ts-criteria="SAGD ID">SAGD ID</th>
-                        <th ts-criteria="baseMean">baseMean</th>
+                        <th ts-criteria="Tissue">Tissue</th>
+                        <th ts-criteria="Stage">Stage</th>
                         <th ts-criteria="FPKM MALE">FPKM(♂)</th>
                         <th ts-criteria="FPKM FEMALE">FPKM(♀)</th>
                         <th ts-criteria="Chromosome">Chromosome</th>
-                        <th ts-criteria="log2FoldChange">log2FoldChange</th>
+                        <th ts-criteria="log2(M/F ratio)">log2(M/F ratio)</th>
                         <th ts-criteria="padj" >padj</th>
-                        <th></th>
                     </tr>
                     </thead>
-                    <tbody>
+                    <tbody ng-show="loadcomp">
                     <tr ng-repeat="gene in analysis" ts-repeat>
-                        <td><a ng-href="#!/sagd_id?sagd_id={{ gene.sagd_id }}">{{ gene.sagd_id }}</a></td>
-                        <td>{{ gene.baseMean }}</td>
-                        <td>{{ gene.FPKM_SRX_T }}</td>
-                        <td>{{ gene.FPKM_SRX_O }}</td>
+                        <td><a ng-href="#!/sagd_info?sagd_id={{ gene.sagd_id }}">{{ gene.sagd_id }}</a></td>
+                        <td>{{ gene.Tissue }}</td>
+                        <td>{{ gene.Stage }}</td>
+                        <td>{{ gene.FPKM_F }}</td>
+                        <td>{{ gene.FPKM_M }}</td>
                         <td>{{ gene.chromosome_name }}</td>
                         <td>{{ gene.log2FoldChange }}</td>
                         <td>{{ gene.padj }}</td>
                     </tr>
                     </tbody>
                 </table>
+
             </div>
+
         </section>
         <section id="gene_model">
             <div class="page-header">

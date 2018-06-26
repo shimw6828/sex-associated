@@ -1,0 +1,71 @@
+<div class="container">
+    <div class="row" style="margin-bottom: 20px">
+        <form class="pull-right"  accept-charset="UTF-8">
+        <input type="text" id="query" class="form-control" placeholder="SRA id,tissue,stage,species" title="SRA id,tissue,stage,species">
+    </form>
+
+    </div>
+    <div class="panel panel-default">
+    <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1" >
+        <thead>
+        <tr>
+            <th ts-criteria="sagd_id">SAGD ID</th>
+
+            <th ts-criteria="SRA_Study">SRP</th>
+            <th ts-criteria="SRA_Run">SRR</th>
+
+            <th ts-criteria="SRA_Experiment">SRX</th>
+            <th ts-criteria="Sex">Sex</th>
+            <th ts-criteria="Scientific_name">Scientific name</th>
+            <th ts-criteria="Common_name">Common name</th>
+            <th ts-criteria="Tissue">Tissue</th>
+            <th ts-criteria="Stage">Stage</th>
+        </tr>
+        </thead>
+
+        <tbody ng-show="loadcomp">
+            <tr ng-repeat="dataset in dataset_list track by $index" ts-repeat>
+                 <td>
+                    <a href="#!/gene_info?gene={{ dataset.sagd_id }}" target="_self" ng-click="gene_detail()">
+                        {{ dataset.sagd_id }}
+                    </a>
+                </td>
+                <td><a ng-href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ dataset.SRA_Study }}" target="_blank">{{ dataset.SRA_Study }}</a></td>
+                <td><a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?run={{ dataset.SRA_Run }}">{{ dataset.SRA_Run }}</a></td>
+                <td><a href="https://www.ncbi.nlm.nih.gov/sra/{{ dataset.SRA_Experiment }}">{{ dataset.SRA_Experiment }}</a></td>
+                <td>{{ dataset.Sex }}</td>
+                <td>{{ dataset.Scientific_name }}</td>
+                <td>{{ dataset.Common_name }}</td>
+                <td>{{ dataset.Tissue }}</td>
+                <td>{{ dataset.Stage }}</td>
+            </tr>
+
+
+        </tbody>
+    </table>
+    </div>
+    <div class="panel-body" ng-show="loadcomp"><p>Note: The sorting here is only for the search results displayed on the current page, instead of all the results.</p></div>
+    <div ng-hide="loadcomp" style="margin-bottom: 20px"><img class="aligncenter" src="/static/image/loading.gif" alt="" height="30px"></div>
+    <div paging
+         page="currentPage"
+         page-size=20
+         total="dataset_list_count"
+         scroll-top="true"
+         hide-if-empty="true"
+         show-prev-next="true"
+         show-first-last="true"
+         text-title-page="Page {page} Hover Over"
+         text-title-first="First hover"
+         text-title-last="Last hover"
+         text-title-next="Next hover"
+         text-title-prev="Prev hover"
+         show-prev-next="true"
+         show-first-last="true"
+         ul-class="pagination"
+         active-class="active"
+         disabled-class="disabled"
+         paging-action="update_dataset('default',page,page-size)"
+    >
+    </div>
+
+</div>

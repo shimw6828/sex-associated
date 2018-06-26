@@ -1,0 +1,47 @@
+
+<div class="container">
+    <div class="sagd_con" ng-repeat="sagd in sagd_list" style="background-color: {{ sagd.background }};">
+
+
+
+
+    </div>
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <strong>{{ sagd_info.sagd_id }}</strong>
+        </div>
+        <div class="panel-body">
+            <samll>SRP: <a ng-href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?study={{ sagd_info.SRA_Study }}" target="_blank">{{ sagd_info.SRA_Study }}</a></samll>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<samll>Tissue: {{ sagd_info.Tissue }}</samll>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<samll>Stage: {{ sagd_info.Stage }}</samll>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<samll>SAG number: {{ sagd_info.sag_num }}</samll>
+            <p style="margin: 0px">significant genes: </p>
+            <small ng-repeat="gene in sagd_info.significant_gene">&nbsp&nbsp&nbsp&nbspGene id: <a href="#!/gene_info?gene={{ gene.ensembl_gene_id }}" target="_blank">{{ gene.ensembl_gene_id }}</a> &nbsp&nbsp symbol: {{ gene.symbol }} &nbsp&nbsp padj:{{ gene.padj }} &nbsp&nbsp log2(M/F ratio): {{ gene.log2FoldChange }}<br></small>
+        </div>
+    </div>
+    <div class="panel panel-default">
+    <table class="table table-bordered table-hover table-condensed" ts-wrapper>
+        <thead>
+        <tr>
+            <th ts-criteria="SRR">SRR</th>
+            <th ts-criteria="SRX">SRX</th>
+            <th ts-criteria="sex">sex<img src="/static/image/help.png" alt="" style="width:20px;margin-top: -3px;margin-right: -3px;float: right;cursor: pointer" data-toggle="tooltip" data-placement="bottom" title="Note: The sorting in this table only sorts the results displayed on the current page, not all results."></th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in items" ts-repeat>
+                <td>
+                    <a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?run={{ item.SRA_Run }}" target="_blank" ng-click="gene_detail()">
+                        {{ item.SRA_Run }}
+                    </a>
+                </td>
+                <td>
+                    <a href="https://www.ncbi.nlm.nih.gov/sra/{{ item.SRA_Experiment }}" target="_blank" ng-click="gene_detail()">
+                        {{ item.SRA_Experiment }}
+                    </a>
+                </td>
+                <td>{{ item.Sex }}</td>
+            </tr>
+        </tbody>
+    </table>
+        </div>
+
+
+</div>

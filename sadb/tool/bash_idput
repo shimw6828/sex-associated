@@ -1,0 +1,9 @@
+#sagd_result put in 
+#enter my environment
+source /opt/shimw/github/sex-associated/sadb/venv/bin/activate
+sagd_dir="/home/zhangna/SAdatabase/result/DESeq/V32/GTEx/"
+cd $sagd_dir
+for i in `ls $sagd_dir`
+do
+python /opt/shimw/github/sex-associated/sadb/tool/sradata.py $i
+done

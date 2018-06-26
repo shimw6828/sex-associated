@@ -2,7 +2,7 @@ angular.module('sadb')
     .controller('geneinfoController', geneinfoController);
 
 function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$anchorScroll, $location,$rootScope){
-
+    $scope.loadcomp=false
     $rootScope.$on('$routeChangeStart',function () {
         $('#footer').css('background-color','#FFFFFF');
     });
@@ -20,24 +20,7 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
 
             }
         )
-        $http({
-            url: base_url+'/api/analysis',
-            params: {gene:$routeParams.gene},
-            method: 'GET'
-        }).then(
-            function (response) {
-                $scope.analysis = response.data.analysis;
-                $scope.taxname=response.data.taxname
-                console.log($scope.analysis)
-                $("#gene_detail_con").css('background-color','#fdeaee')
-                $("#gene_detail_con").css('background-color','#eaf9fd')
-                $('#footer').css('background-color','#eaf9fd')
-                $(function (){
-                    $("[data-toggle='popover']").popover();
-                });
 
-            }
-        )
         $http({
             url: base_url+'/api/get_summary',
             params: {gene:$routeParams.gene},
@@ -130,8 +113,30 @@ function geneinfoController($scope,$http,$window,$routeParams,sadbService,$sce,$
 
 
     }
+    $scope.get_analysis = function () {
+        $http({
+            url: base_url+'/api/analysis',
+            params: {gene:$routeParams.gene},
+            method: 'GET'
+        }).then(
+            function (response) {
+                $scope.analysis = response.data.analysis;
+                $scope.taxname=response.data.taxname
+                console.log($scope.analysis)
+                $scope.loadcomp=true
+                $("#gene_detail_con").css('background-color','#fdeaee')
+                $("#gene_detail_con").css('background-color','#eaf9fd')
+                $('#footer').css('background-color','#eaf9fd')
+                $(function (){
+                    $("[data-toggle='popover']").popover();
+                });
+
+            }
+        )
+    }
 
     $scope.get_gene_detail();
+    $scope.get_analysis()
     $('body').scrollspy({target:'#geneInfo_siderbar',offset:90});
 
     $scope.goto = function (element) {

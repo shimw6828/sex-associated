@@ -23,12 +23,33 @@ angular.module('sadb',['ngRoute','bw.paging','tableSort','ui.select','ngSanitize
                 templateUrl:"/static/pages/gene_info.html",
                 controller: "geneinfoController"
             })
-            .when("/sagd_id",{
-                templateUrl:"/static/pages/sagd_id.html",
-                controller: "sagdidController"
+            .when("/sagd_info",{
+                templateUrl:"/static/pages/sagd_info.html",
+                controller: "sagdinfoController"
             })
-            .when("/browse",{
-                templateUrl:"/static/pages/browse.html",
+            .when("/sagd_list",{
+                templateUrl:"/static/pages/sagd_list.html",
+                controller: "sagdlistController"
+            })
+            .when("/browse_gene",{
+                templateUrl:"/static/pages/browse_gene.html",
+                controller: "browsegeneController"
+            })
+            .when("/noResult",{
+                templateUrl:"/static/pages/noResult.html"
+            })
+            .when("/contact",{
+                templateUrl:"/static/pages/contact.html"
+            })
+            .when("/drug",{
+                templateUrl:"/static/pages/drug.html",
+                controller: "drugController"
+            }).when("/dataset",{
+                templateUrl:"/static/pages/dataset.html",
+                controller: "datasetController"
+            })
+            .when("/browse_species",{
+                templateUrl:"/static/pages/browse_species.html",
                 controller: "browseController"
             });
     })

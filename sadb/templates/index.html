@@ -28,7 +28,7 @@
 </head>
 <body>
 <div ng-include="'/static/partials/navigation.html'"></div>
-
+<img src="/static/image/top.png" align="middle" style="margin-top: 51px">
 <div class="main" >
     <div ng-view></div>
 </div>
@@ -40,5 +40,10 @@
     <script src="{{ url_for('static',filename='js/browseController.js') }}"></script>
     <script src="{{ url_for('static',filename='js/taxonomyController.js') }}"></script>
     <script src="{{ url_for('static',filename='js/geneinfoController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/sagdinfoController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/sagdlistController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/browsegeneController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/drugController.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/datasetController.js') }}"></script>
 
 </html>

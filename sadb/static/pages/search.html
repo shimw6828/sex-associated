@@ -1,3 +1,4 @@
+
 <div class="container">
     <div class="row">
         <div class="col-md-7" style="padding:0">
@@ -19,44 +20,49 @@
                  ul-class="pagination"
                  active-class="active"
                  disabled-class="disabled"
-                 paging-action="update_gene('test',page,page-size)"
+                 paging-action="update_gene('default',page,page-size)"
             >
             </div>
         </div>
-        <form class="form-inline" style="transform: translateY(90%)" ng-show="gene_list_count >= 15">
-            padj:
-            <input type="number" id="min" style="width: 40px"  >
-            ~
-            <input type="number" id="max" style="width: 40px"  >
-        </form>
+        <div class="col-md-2 pull-right" style="width: 170px;transform: translateY(80%)" ng-hide="gene_list_count<=20">
+            <ui-select ng-model="padj" theme="selectize" style="width:140px;" title="Choose a stage" ng-change="padjchange({{$select.selected}})">
+            <ui-select-match placeholder="padj(default=0.05)" id="padj">{{$select.selected}}</ui-select-match>
+            <ui-select-choices repeat="padj in padjs | filter:$select.search">
+                <span ng-bind-html="padj | highlight: $select.search"></span>
+            </ui-select-choices>
+            </ui-select>
+        </div>
+        <div ng-hide="gene_list_count >= 20"><br><br></div>
 
     </div>
-    <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1">
+    <div class="panel panel-default">
+    <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1" >
         <thead>
         <tr>
             <th ts-criteria="gene_id">Gene ID</th>
             <th ts-criteria="symbol">symbol</th>
             <th ts-criteria="SAGD ID">SAGD ID</th>
-            <th ts-criteria="baseMean">baseMean</th>
+            <th ts-criteria="Common_name">specie</th>
             <th ts-criteria="FPKM MALE">FPKM(♂)</th>
             <th ts-criteria="FPKM FEMALE">FPKM(♀)</th>
             <th ts-criteria="Chromosome">Chromosome</th>
-            <th ts-criteria="log2FoldChange">log2FoldChange</th>
+            <th ts-criteria="log2(M/F ratio)">log2(M/F ratio)</th>
             <th ts-criteria="padj" >padj</th>
+
         </tr>
         </thead>
-        <tbody>
-            <tr ng-repeat="gene in gene_list" ts-repeat>
+        <tbody ng-show="loadcomp">
+            <tr ng-repeat="gene in gene_list track by $index" ts-repeat>
                  <td>
                     <a href="#!/gene_info?gene={{ gene.gene_ID }}" target="_self" ng-click="gene_detail()">
                         {{ gene.gene_ID }}
                     </a>
                 </td>
                 <td>{{ gene.external_gene_name }}</td>
-                <td><a ng-href="#!/sagd_id?sagd_id={{ gene.sagd_id }}">{{ gene.sagd_id }}</a></td>
-                <td>{{ gene.baseMean }}</td>
-                <td>{{ gene.FPKM_SRX_T }}</td>
-                <td>{{ gene.FPKM_SRX_O }}</td>
+                <td><a ng-href="#!/sagd_info?sagd_id={{ gene.sagd_id }}">{{ gene.sagd_id }}</a></td>
+                <td>{{ gene.Common_name }}</td>
+                <td>{{ gene.FPKM_F }}</td>
+                <td>{{ gene.FPKM_M }}</td>
                 <td>{{ gene.chromosome_name }}</td>
                 <td>{{ gene.log2FoldChange }}</td>
                 <td>{{ gene.padj }}</td>
@@ -65,6 +71,10 @@
 
         </tbody>
     </table>
+        </div>
+    <div class="panel-body" ng-show="loadcomp"><p>Note: The sorting here is only for the search results displayed on the current page, instead of all the results.</p></div>
+    <div ng-hide="loadcomp" style="margin-bottom: 20px"><img class="aligncenter" src="/static/image/loading.gif" alt="" height="30px"></div>
+
     <div paging
          page="currentPage"
          page-size=20

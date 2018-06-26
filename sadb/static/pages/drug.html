@@ -1,0 +1,63 @@
+<div class="container">
+    <div class="row" style="margin-bottom: 20px">
+        <form class="pull-right"  accept-charset="UTF-8">
+        <input type="text" id="query" class="form-control" placeholder="drug name,drugbank id,ensembl id,drug type" title="drug name,drugbank id,ensembl id,drug type">
+    </form>
+
+    </div>
+    <div class="panel panel-default">
+    <table class="table table-bordered table-hover table-condensed" ts-wrapper ng-show="sadb_gene_list.length+1" >
+        <thead>
+        <tr>
+            <th ts-criteria="gene_id">Gene ID</th>
+            <th ts-criteria="DrugBank_ID">DrugBank ID</th>
+            <th ts-criteria="Drug_name">Drug name</th>
+            <th ts-criteria="Type">Type</th>
+            <th ts-criteria="UniProt ID">UniProt ID</th>
+            <th ts-criteria="UniProt_Name">UniProt name</th>
+        </tr>
+        </thead>
+
+        <tbody ng-show="loadcomp">
+            <tr ng-repeat="drug in drug_list track by $index" ts-repeat>
+                 <td>
+                    <a href="#!/gene_info?gene={{ drug.ensembl_gene_id }}" target="_self" ng-click="gene_detail()">
+                        {{ drug.ensembl_gene_id }}
+                    </a>
+                </td>
+                <td><a href="https://www.drugbank.ca/drugs/{{ drug.DrugBank_ID }}">{{ drug.DrugBank_ID }}</a></td>
+                <td>{{ drug.Drug_name }}</td>
+                <td>{{ drug.Type }}</td>
+                <td><a href="https://www.uniprot.org/uniprot/{{ drug["UniProt ID"] }}">{{ drug["UniProt ID"] }}</a></td>
+                <td>{{ drug.UniProt_Name }}</td>
+            </tr>
+
+
+        </tbody>
+    </table>
+    </div>
+    <div class="panel-body" ng-show="loadcomp"><p>Note: The sorting here is only for the search results displayed on the current page, instead of all the results.</p></div>
+    <div ng-hide="loadcomp" style="margin-bottom: 20px"><img class="aligncenter" src="/static/image/loading.gif" alt="" height="30px"></div>
+    <div paging
+         page="currentPage"
+         page-size=20
+         total="drug_list_count"
+         scroll-top="true"
+         hide-if-empty="true"
+         show-prev-next="true"
+         show-first-last="true"
+         text-title-page="Page {page} Hover Over"
+         text-title-first="First hover"
+         text-title-last="Last hover"
+         text-title-next="Next hover"
+         text-title-prev="Prev hover"
+         show-prev-next="true"
+         show-first-last="true"
+         ul-class="pagination"
+         active-class="active"
+         disabled-class="disabled"
+         paging-action="update_drug('default',page,page-size)"
+    >
+    </div>
+
+</div>
